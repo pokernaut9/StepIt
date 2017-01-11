@@ -13,7 +13,7 @@ android {
     def fitbit_RedirectUri = "stepit://callback"
     def fitbit_AuthenticationUrl = "https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=$fitbit_ClientID&redirect_uri=$fitbit_RedirectUri&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800"
     def fitbit_RevokeUserTokenUrl = "https://api.fitbit.com/oauth2/revoke?token="
-    def fitbit_GetStepsUrl = "https://api.fitbit.com/1/user/-/activities/steps/date/today/1m.json"
+    def fitbit_GetStepsUrl = "https://api.fitbit.com/1/user/-/activities/steps/date/today/1d.json"
 
     defaultConfig {
         applicationId "net.devcats.stepit"
