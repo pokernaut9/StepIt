@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvToken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HOME SCREEN"/>
+
+    <Button
+        android:id="@+id/btnDisconnectDevice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Disconnect Device!"/>
+
+    <Button
+        android:id="@+id/btnGetSteps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Steps!"/>
+
+    <Button
+        android:id="@+id/btnClearPreferences"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear Preferences!"/>
+
+
+</LinearLayout>

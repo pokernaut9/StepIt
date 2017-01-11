@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
+
+    def environment_release = "release"
+    def environment_debug = "debug"
+
+    def fitbit_ClientID = "2286TV"
+    def fitbit_ClientSecret = "2b01a4e5a5b2087356071a2ae4202772"
+    def fitbit_RedirectUri = "stepit://callback"
+    def fitbit_AuthenticationUrl = "https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=$fitbit_ClientID&redirect_uri=$fitbit_RedirectUri&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800"
+    def fitbit_RevokeUserTokenUrl = "https://api.fitbit.com/oauth2/revoke?token="
+    def fitbit_GetStepsUrl = "https://api.fitbit.com/1/user/-/activities/steps/date/today/1m.json"
+
+    defaultConfig {
+        applicationId "net.devcats.stepit"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'FITBIT_CLIENT_ID', "\"$fitbit_ClientID\""
+        buildConfigField 'String', 'FITBIT_CLIENT_SECRET', "\"$fitbit_ClientSecret\""
+        buildConfigField 'String', 'FITBIT_AUTH_URL', "\"$fitbit_AuthenticationUrl\""
+        buildConfigField 'String', 'FITBIT_REVOKE_USER_TOKEN_URL', "\"$fitbit_RevokeUserTokenUrl\""
+        buildConfigField 'String', 'FITBIT_GET_STEPS_URL', "\"$fitbit_GetStepsUrl\""
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'ENVIRONMENT', "\"$environment_release\""
+        }
+        debug {
+            buildConfigField 'String', 'ENVIRONMENT', "\"$environment_debug\""
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    testCompile 'junit:junit:4.12'
+    compile files('libs/okhttp-3.5.0.jar')
+    compile 'com.squareup.okio:okio:1.0.0'
+    compile files('libs/okio-1.11.0.jar')
+    compile 'com.android.support:customtabs:25.1.0'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.android.gms:play-services-fitness:10.0.1'
+    compile 'com.android.support:design:25.1.0'
+}
