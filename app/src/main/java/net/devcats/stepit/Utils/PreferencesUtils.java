@@ -27,7 +27,7 @@ public class PreferencesUtils {
         mContext = context;
     }
 
-    public void updateString(String key, String value) {
+    public void setString(String key, String value) {
         SharedPreferences preferences = mContext.getSharedPreferences(mContext.getApplicationInfo().name, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(key, value);
@@ -54,9 +54,5 @@ public class PreferencesUtils {
     public void clear() {
         SharedPreferences preferences = mContext.getSharedPreferences(mContext.getApplicationInfo().name, Context.MODE_PRIVATE);
         preferences.edit().clear().apply();
-    }
-
-    public void clearDevice() {
-        setInt(Device.KEY_DEVICE_TYPE, -1);
     }
 }
