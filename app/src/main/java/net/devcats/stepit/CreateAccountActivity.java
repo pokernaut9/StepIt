@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.devcats.stepit.Handlers.UserHandler;
-import net.devcats.stepit.Utils.LogUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,11 +57,15 @@ public class CreateAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_account);
         unbinder = ButterKnife.bind(this);
 
+        txtName.setCompoundDrawables(null, null, null, null);
+        txtEmailAddress.setCompoundDrawables(null, null, null, null);
+        txtPassword.setCompoundDrawables(null, null, null, null);
+        txtConfirmPassword.setCompoundDrawables(null, null, null, null);
+
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (validateForm()) {
-
                     try {
                         JSONObject object = new JSONObject();
                         object.put("name", txtName.getText().toString());
@@ -74,10 +77,6 @@ public class CreateAccountActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else {
-
-                    // TODO: highlight field with error
-                    Toast.makeText(CreateAccountActivity.this, "Error in form...", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -101,21 +100,34 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private boolean validateForm() {
 
+        boolean hasError = false;
+        txtName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        txtEmailAddress.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        txtPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        txtConfirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
         if (txtName.getText().length() <= 3) {
-            LogUtils.e("Error in checking name");
-            return false;
-        } else if (txtEmailAddress.getText().length() < 10 || !txtEmailAddress.getText().toString().contains("@") || !txtEmailAddress.getText().toString().contains(".")) {
-            LogUtils.e("Error in checking email");
-            return false;
-        } else if (txtPassword.getText().length() < 4 || txtPassword.getText().length() > 25) {
-            LogUtils.e("Error in checking password");
-            return false;
-        } else if (!txtConfirmPassword.getText().toString().equals(txtPassword.getText().toString())) {
-            LogUtils.e("Error in checking password match check");
-            return false;
+            txtName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_attention, 0);
+            hasError = true;
         }
 
-        return true;
+//        if (txtEmailAddress.getText().length() < 10 || !txtEmailAddress.getText().toString().contains("@") || !txtEmailAddress.getText().toString().contains(".")) {
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(txtEmailAddress.getText()).matches()) {
+            txtEmailAddress.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_attention, 0);
+            hasError = true;
+        }
+
+        if (txtPassword.getText().length() < 4 || txtPassword.getText().length() > 25) {
+            txtPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_attention, 0);
+            hasError = true;
+        }
+
+        if (txtConfirmPassword.getText().length() == 0 || !txtConfirmPassword.getText().toString().equals(txtPassword.getText().toString())) {
+            txtConfirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_attention, 0);
+            hasError = true;
+        }
+
+        return !hasError;
     }
 
     private class CreateAccountTask extends AsyncTask<JSONObject, Void, String> {

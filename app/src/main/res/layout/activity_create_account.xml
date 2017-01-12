@@ -24,7 +24,8 @@
         android:background="@color/create_account_edit_text_background"
         android:padding="@dimen/spacing_small"
         android:hint="@string/full_name"
-        android:textColorHint="@color/gray"/>
+        android:textColorHint="@color/gray"
+        android:textColor="@android:color/white"/>
 
     <EditText
         android:id="@+id/txtEmailAddress"
@@ -35,6 +36,7 @@
         android:padding="@dimen/spacing_small"
         android:hint="@string/email_address"
         android:textColorHint="@color/gray"
+        android:textColor="@android:color/white"
         android:inputType="textEmailAddress"/>
 
     <EditText
@@ -46,7 +48,8 @@
         android:padding="@dimen/spacing_small"
         android:hint="@string/password"
         android:textColorHint="@color/gray"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword"
+        android:textColor="@android:color/white"/>
 
     <EditText
         android:id="@+id/txtConfirmPassword"
@@ -57,7 +60,8 @@
         android:padding="@dimen/spacing_small"
         android:hint="@string/confirm_password"
         android:textColorHint="@color/gray"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword"
+        android:textColor="@android:color/white"/>
 
     <Button
         android:id="@+id/btnSignUp"
