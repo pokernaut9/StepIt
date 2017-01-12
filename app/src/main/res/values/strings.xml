@@ -7,4 +7,7 @@
     <string name="fit_bit">FitBit</string>
     <string name="android_wearable">Android Wearable</string>
     <string name="permission_rationale">Permission Rationale</string>
+
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
 </resources>
