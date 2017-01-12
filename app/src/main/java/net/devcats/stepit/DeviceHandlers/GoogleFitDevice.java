@@ -33,11 +33,13 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
     private GoogleApiClient mClient = null;
 
     public GoogleFitDevice() {
-        setType(Device.TYPE_ANDROID_WEARABLE);
+        setType(Device.TYPE_GOOGLE_FIT);
     }
 
     @Override
     public void connect(FragmentActivity activity) {
+        super.connect(activity);
+
         mClient = new GoogleApiClient.Builder(activity)
                 .addApi(Fitness.HISTORY_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
@@ -56,6 +58,8 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
 
     @Override
     public void remove(FragmentActivity activity) {
+        super.remove(activity);
+
         try {
             mClient.clearDefaultAccountAndReconnect();
             mClient.stopAutoManage(activity);
@@ -65,7 +69,6 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
             e.printStackTrace();
         }
 
-        PreferencesUtils.getInstance(activity).clearDevice();
         deviceListener.onDeviceRemoved();
     }
 
@@ -77,7 +80,7 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         LogUtils.d("Connected!!!");
-        deviceListener.onDeviceConnected(Device.TYPE_ANDROID_WEARABLE);
+        deviceListener.onDeviceConnected(Device.TYPE_GOOGLE_FIT);
     }
 
     @Override

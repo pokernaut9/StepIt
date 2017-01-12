@@ -55,4 +55,9 @@ public class PreferencesUtils {
         SharedPreferences preferences = mContext.getSharedPreferences(mContext.getApplicationInfo().name, Context.MODE_PRIVATE);
         preferences.edit().clear().apply();
     }
+
+    public void remove(String key) {
+        SharedPreferences preferences = mContext.getSharedPreferences(mContext.getApplicationInfo().name, Context.MODE_PRIVATE);
+        preferences.edit().remove(key).apply();
+    }
 }

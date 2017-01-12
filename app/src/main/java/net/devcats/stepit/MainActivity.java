@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
 
         // New user, show create account screen
         } else {
-
-
             userHandler.removeUser(this);
             pushFragment(CreateAccountFragment.newInstance());
         }
@@ -80,15 +78,15 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
 
     @Override
     public void onDeviceConnected(int type) {
-        PreferencesUtils.getInstance(this).setInt(Device.KEY_DEVICE_TYPE, type);
-
         switch (type) {
-            case Device.TYPE_ANDROID_WEARABLE:
+            case Device.TYPE_GOOGLE_FIT:
 
                 break;
 
             case Device.TYPE_FIT_BIT:
-                ((FitBitDevice) deviceHandler.getDevice()).parseFitBitLoginResponse(data.toString());
+                if (data != null) { // Only need to call this when a device is added for the first time, or updating token.
+                    ((FitBitDevice) deviceHandler.getDevice()).parseFitBitLoginResponse(this, data.toString());
+                }
                 break;
         }
 

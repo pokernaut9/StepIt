@@ -11,6 +11,7 @@ import android.util.Base64;
 import net.devcats.stepit.BuildConfig;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Utils.LogUtils;
+import net.devcats.stepit.Utils.PreferencesUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,21 +29,35 @@ import okhttp3.Response;
 
 public class FitBitDevice extends Device {
 
-    private String fitBitToken;
+    private final static String KEY_FITBIT_TOKEN = "key_fitbit_token";
+    private final static String KEY_FITBIT_TOKEN_TYPE = "key_fitbit_token_type";
 
-    public FitBitDevice() {
+    private String fitBitToken;
+    private String fitBitTokenType;
+
+    public FitBitDevice(Context context) {
         setType(Device.TYPE_FIT_BIT);
+
+        fitBitToken = PreferencesUtils.getInstance(context).getString(KEY_FITBIT_TOKEN);
+        fitBitTokenType = PreferencesUtils.getInstance(context).getString(KEY_FITBIT_TOKEN_TYPE);
     }
 
     @Override
     public void connect(FragmentActivity activity) {
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(activity, Uri.parse(BuildConfig.FITBIT_AUTH_URL));
+        super.connect(activity);
+
+        if (fitBitToken == null || fitBitToken.isEmpty()) {
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(activity, Uri.parse(BuildConfig.FITBIT_AUTH_URL));
+        } else {
+            deviceListener.onDeviceConnected(Device.TYPE_FIT_BIT);
+        }
     }
 
     @Override
     public void remove(final FragmentActivity activity) {
+        super.remove(activity);
 
         new Thread(new Runnable() {
             @Override
@@ -56,10 +71,8 @@ public class FitBitDevice extends Device {
 
                     Response response = new OkHttpClient().newCall(request).execute();
 
-                    SharedPreferences.Editor editor = activity.getSharedPreferences(activity.getApplicationInfo().name, Context.MODE_PRIVATE).edit();
-                    editor.remove(Device.KEY_DEVICE_DATA);
-                    editor.remove(Device.KEY_DEVICE_TYPE);
-                    editor.apply();
+                    PreferencesUtils.getInstance(activity).remove(KEY_FITBIT_TOKEN);
+                    PreferencesUtils.getInstance(activity).remove(KEY_FITBIT_TOKEN_TYPE);
 
                     deviceListener.onDeviceRemoved();
 
@@ -76,12 +89,20 @@ public class FitBitDevice extends Device {
         new FitBitGetStepsTask().execute();
     }
 
-    public void parseFitBitLoginResponse(String response) {
+    public void parseFitBitLoginResponse(Context context, String response) {
         fitBitToken = extractToken(response);
+        PreferencesUtils.getInstance(context).setString(KEY_FITBIT_TOKEN, fitBitToken);
+
+        fitBitTokenType = extractTokenType(response);
+        PreferencesUtils.getInstance(context).setString(KEY_FITBIT_TOKEN_TYPE, fitBitTokenType);
     }
 
     private String extractToken(String response) {
         return response.substring(response.indexOf("access_token=") + "access_token=".length(), response.indexOf("&"));
+    }
+
+    private String extractTokenType(String response) {
+        return response.substring(response.indexOf("token_type=") + "token_type=".length(), response.indexOf("&", response.indexOf("token_type=")));
     }
 
     public String getToken() {
@@ -95,7 +116,7 @@ public class FitBitDevice extends Device {
             try {
                 Request request = new Request.Builder()
                         .url(BuildConfig.FITBIT_GET_STEPS_URL)
-                        .addHeader("Authorization", getAuthorizationHeader())
+                        .addHeader("Authorization", fitBitTokenType + " " + fitBitToken)
                         .build();
                 Response response = new OkHttpClient().newCall(request).execute();
 
@@ -107,7 +128,7 @@ public class FitBitDevice extends Device {
                     return -1;
                 }
 
-                JSONArray jsonArray = new JSONObject(response.body().string()).getJSONArray("activities-log-steps");
+                JSONArray jsonArray = object.getJSONArray("activities-steps");
                 return jsonArray.getJSONObject(0).getInt("value");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -119,11 +140,10 @@ public class FitBitDevice extends Device {
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
 
-            if (integer >= 0) {
-                stepsListener.onStepsReceived(integer);
-            } else {
+            if (integer < 0) {
                 LogUtils.e("ERROR: An error occurred while trying to receive steps from FitBit!");
             }
+            stepsListener.onStepsReceived(integer);
         }
     }
 

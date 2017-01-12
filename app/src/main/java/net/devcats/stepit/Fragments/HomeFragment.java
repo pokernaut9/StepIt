@@ -58,8 +58,8 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
 
         if (device.getType() == Device.TYPE_FIT_BIT) {
             tvToken.setText(((FitBitDevice) DeviceHandler.getInstance().getDevice()).getToken());
-        } else if (device.getType() == Device.TYPE_ANDROID_WEARABLE) {
-            tvToken.setText("ANDROID WEARABLE!!!");
+        } else if (device.getType() == Device.TYPE_GOOGLE_FIT) {
+            tvToken.setText("GOOGLE FIT!!!");
         }
 
         btnDisconnectDevice.setOnClickListener(new View.OnClickListener() {

@@ -42,7 +42,7 @@ public class DeviceHandler implements Device.StepsListener {
 
     public void connectDevice(FragmentActivity context, int deviceType) {
         switch (deviceType) {
-            case Device.TYPE_ANDROID_WEARABLE:
+            case Device.TYPE_GOOGLE_FIT:
                 device = new GoogleFitDevice();
                 device.registerListener((Device.DeviceListener) context);
                 device.registerStepsListener(this);
@@ -50,7 +50,7 @@ public class DeviceHandler implements Device.StepsListener {
                 break;
 
             case Device.TYPE_FIT_BIT:
-                device = new FitBitDevice();
+                device = new FitBitDevice(context);
                 device.registerListener((Device.DeviceListener) context);
                 device.registerStepsListener(this);
                 device.connect(context);
