@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
         // New user, show create account screen
         } else {
             userHandler.removeUser(this);
-            Intent newIntent = new Intent(this, CreateAccountActivity.class);
+            Intent newIntent = new Intent(this, LoginActivity.class);
             startActivity(newIntent);
 
             finish();

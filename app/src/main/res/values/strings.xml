@@ -1,16 +1,23 @@
 <resources>
     <string name="app_name">StepIt</string>
 
-    <!-- Create Account -->
-    <string name="password">password</string>
-    <string name="login">Login</string>
-
     <string name="fit_bit">FitBit</string>
     <string name="google_fit">Google Fit</string>
     <string name="android_wearable">Android Wearable</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+
     <string name="email_address">Email Address</string>
-    <string name="sign_up">Not a member? Sign up now.</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="sign_up_message">Not a member? Sign up for free!</string>
+    <string name="login_message">Already a member? Sign in&#8230;</string>
+
+    <string name="sign_up">Sign up</string>
+    <string name="full_name">First and last name</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="step_it_sign_up">StepIt Sign Up</string>
+    <string name="lets_go">Let\'s Go</string>
+
 </resources>
