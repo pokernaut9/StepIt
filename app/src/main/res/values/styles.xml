@@ -9,11 +9,4 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <style name="EditText_Phone">
-        <item name="android:imeOptions">flagNoExtractUi|actionNext</item>
-        <item name="android:inputType">phone</item>
-        <item name="android:digits">0123456789 +()-</item>
-        <item name="android:maxLength">17</item>
-        <item name="android:hint">@string/hint_phone_number</item>
-    </style>
 </resources>

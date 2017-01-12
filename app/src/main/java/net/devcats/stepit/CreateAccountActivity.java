@@ -26,8 +26,10 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private Unbinder unbinder;
     
-    @BindView(R.id.txtPhoneNumber)
-    EditText txtPhoneNumber;
+    @BindView(R.id.txtEmailAddress)
+    EditText txtEmailAddress;
+    @BindView(R.id.txtPassword)
+    EditText txtPassword;
     @BindView(R.id.btnLogin)
     Button btnLogin;
 
@@ -38,28 +40,6 @@ public class CreateAccountActivity extends AppCompatActivity {
         unbinder = ButterKnife.bind(this);
 
         initToolbar();
-
-        txtPhoneNumber.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // format phone number, remove then re-add text watcher to avoid infinite loop
-                txtPhoneNumber.removeTextChangedListener(this);
-                txtPhoneNumber.setText(UiUtils.formatPhoneNumber(txtPhoneNumber.getText().toString()));
-                int phoneNumberLength = txtPhoneNumber.getText().length();
-                if (phoneNumberLength > 0) {
-                    txtPhoneNumber.setSelection(txtPhoneNumber.getText().charAt(phoneNumberLength - 1) == ')' ? phoneNumberLength - 1 : phoneNumberLength);
-                }
-                txtPhoneNumber.addTextChangedListener(this);
-            }
-        });
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
