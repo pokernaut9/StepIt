@@ -22,8 +22,8 @@ public class SelectDeviceFragment extends BaseFragment {
 
     @BindView(R.id.btnFitBit)
     Button btnFitBit;
-    @BindView(R.id.btnAndroidWearable)
-    Button btnAndroidWearable;
+    @BindView(R.id.btnGoogleFit)
+    Button btnGoogleFit;
 
     public static SelectDeviceFragment newInstance() {
         return new SelectDeviceFragment();
@@ -44,10 +44,10 @@ public class SelectDeviceFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        btnAndroidWearable.setOnClickListener(new View.OnClickListener() {
+        btnGoogleFit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DeviceHandler.getInstance().connectDevice(getActivity(), Device.TYPE_ANDROID_WEARABLE);
+                DeviceHandler.getInstance().connectDevice(getActivity(), Device.TYPE_GOOGLE_FIT);
             }
         });
 
