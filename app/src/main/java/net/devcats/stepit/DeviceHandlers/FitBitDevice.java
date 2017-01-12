@@ -1,7 +1,6 @@
 package net.devcats.stepit.DeviceHandlers;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.customtabs.CustomTabsIntent;
@@ -58,30 +57,7 @@ public class FitBitDevice extends Device {
     @Override
     public void remove(final FragmentActivity activity) {
         super.remove(activity);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-                    Request request = new Request.Builder()
-                            .url(BuildConfig.FITBIT_REVOKE_USER_TOKEN_URL + fitBitToken)
-                            .addHeader("Authorization", getAuthorizationHeader())
-                            .build();
-
-                    Response response = new OkHttpClient().newCall(request).execute();
-
-                    PreferencesUtils.getInstance(activity).remove(KEY_FITBIT_TOKEN);
-                    PreferencesUtils.getInstance(activity).remove(KEY_FITBIT_TOKEN_TYPE);
-
-                    deviceListener.onDeviceRemoved();
-
-                    LogUtils.d(response.body().string());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        new FitBitSignOutTask().setContext(activity).execute();
     }
 
     @Override
@@ -144,6 +120,45 @@ public class FitBitDevice extends Device {
                 LogUtils.e("ERROR: An error occurred while trying to receive steps from FitBit!");
             }
             stepsListener.onStepsReceived(integer);
+        }
+    }
+
+    private class FitBitSignOutTask extends AsyncTask<Void, Void, Void> {
+
+        private Context context;
+
+        public FitBitSignOutTask setContext(Context context) {
+            this.context = context;
+            return this;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Request request = new Request.Builder()
+                        .url(BuildConfig.FITBIT_REVOKE_USER_TOKEN_URL + fitBitToken)
+                        .addHeader("Authorization", getAuthorizationHeader())
+                        .build();
+
+                Response response = new OkHttpClient().newCall(request).execute();
+                // TODO: Handle message
+
+                LogUtils.d(response.body().string());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            PreferencesUtils.getInstance(context).remove(KEY_FITBIT_TOKEN);
+            PreferencesUtils.getInstance(context).remove(KEY_FITBIT_TOKEN_TYPE);
+
+            deviceListener.onDeviceRemoved();
         }
     }
 
