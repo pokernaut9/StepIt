@@ -15,6 +15,7 @@ import net.devcats.stepit.Utils.UiUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by Ken Juarez on 1/12/17.
@@ -23,6 +24,8 @@ import butterknife.ButterKnife;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
+    private Unbinder unbinder;
+    
     @BindView(R.id.txtPhoneNumber)
     EditText txtPhoneNumber;
     @BindView(R.id.btnLogin)
@@ -32,7 +35,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         initToolbar();
 
@@ -71,6 +74,12 @@ public class CreateAccountActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 
     private void initToolbar() {

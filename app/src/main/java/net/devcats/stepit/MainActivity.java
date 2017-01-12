@@ -26,12 +26,14 @@ import net.devcats.stepit.Utils.PreferencesUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class MainActivity extends AppCompatActivity implements BaseFragment.PushFragmentInterface, Device.DeviceListener {
 
     private DeviceHandler deviceHandler;
     private Uri data;
     private ActionBarDrawerToggle drawerToggle;
+    private Unbinder unbinder;
 
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         initMenuDrawer();
 
@@ -84,6 +86,12 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
 
             finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 
     private void initMenuDrawer() {
