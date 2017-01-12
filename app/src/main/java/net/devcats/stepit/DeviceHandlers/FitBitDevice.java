@@ -140,10 +140,7 @@ public class FitBitDevice extends Device {
                         .addHeader("Authorization", getAuthorizationHeader())
                         .build();
 
-                Response response = new OkHttpClient().newCall(request).execute();
-                // TODO: Handle message
-
-                LogUtils.d(response.body().string());
+                new OkHttpClient().newCall(request).execute();
             } catch (Exception e) {
                 e.printStackTrace();
             }
