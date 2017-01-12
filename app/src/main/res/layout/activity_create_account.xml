@@ -79,7 +79,7 @@
         android:layout_marginTop="@dimen/spacing_xlarge"
         android:gravity="center"
         android:padding="@dimen/spacing_normal"
-        android:textColor="@color/light_gray"
+        android:textColor="@color/colorPrimary"
         android:text="@string/login_message"/>
 
 
