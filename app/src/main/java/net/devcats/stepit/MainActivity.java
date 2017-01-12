@@ -153,7 +153,10 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
 
             case Device.TYPE_FIT_BIT:
                 if (data != null) { // Only need to call this when a device is added for the first time, or updating token.
-                    ((FitBitDevice) deviceHandler.getDevice()).parseFitBitLoginResponse(this, data.toString());
+                    FitBitDevice device = (FitBitDevice) deviceHandler.getDevice();
+                    if (device != null) {
+                        device.parseFitBitLoginResponse(this, data.toString());
+                    }
                 }
                 break;
         }
