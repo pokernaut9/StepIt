@@ -91,7 +91,7 @@ public class FitBitDevice extends Device {
         protected Integer doInBackground(Void... voids) {
             try {
                 Request request = new Request.Builder()
-                        .url(BuildConfig.FITBIT_GET_STEPS_URL)
+                        .url(BuildConfig.FITBIT_GET_STEPS_DAY_URL)
                         .addHeader("Authorization", fitBitTokenType + " " + fitBitToken)
                         .build();
                 Response response = new OkHttpClient().newCall(request).execute();
