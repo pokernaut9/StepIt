@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.PersistableBundle;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -24,28 +23,17 @@ import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Utils.PreferencesUtils;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 public class MainActivity extends AppCompatActivity implements BaseFragment.PushFragmentInterface, Device.DeviceListener {
 
     private DeviceHandler deviceHandler;
     private Uri data;
     private ActionBarDrawerToggle drawerToggle;
-    private Unbinder unbinder;
-
-    @BindView(R.id.drawerLayout)
-    DrawerLayout drawerLayout;
-
-    @BindView(R.id.nvView)
-    NavigationView nvView;
+//    private NavigationView nvView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        unbinder = ButterKnife.bind(this);
 
         initMenuDrawer();
 
@@ -88,15 +76,11 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
-    }
-
     private void initMenuDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open,  R.string.drawer_close) {
             @Override
