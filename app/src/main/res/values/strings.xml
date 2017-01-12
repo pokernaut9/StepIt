@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">StepIt</string>
+
+    <!-- Create Account -->
     <string name="hint_phone_number">+1 (111) 555&#8211;1111</string>
     <string name="enter_4_digit_password">Enter a 4 digit password</string>
     <string name="confirm_4_digit_password">Confirm 4 digit password</string>
     <string name="login">Login</string>
+
     <string name="fit_bit">FitBit</string>
+    <string name="google_fit">Google Fit</string>
     <string name="android_wearable">Android Wearable</string>
-    <string name="permission_rationale">Permission Rationale</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>

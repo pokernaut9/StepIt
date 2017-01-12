@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import net.devcats.stepit.Fragments.BaseFragment;
-import net.devcats.stepit.Fragments.CreateAccountFragment;
 import net.devcats.stepit.Fragments.HomeFragment;
 import net.devcats.stepit.Fragments.SelectDeviceFragment;
 import net.devcats.stepit.Handlers.DeviceHandler;
@@ -80,7 +79,10 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
         // New user, show create account screen
         } else {
             userHandler.removeUser(this);
-            pushFragment(CreateAccountFragment.newInstance());
+            Intent newIntent = new Intent(this, CreateAccountActivity.class);
+            startActivity(newIntent);
+
+            finish();
         }
     }
 
