@@ -8,6 +8,7 @@ android {
     def environment_release = "release"
     def environment_debug = "debug"
 
+    def login_url = "http://devcats.net/stepit/"
     def sign_up_url = "http://devcats.net/stepit/"
 
     def fitbit_ClientID = "2286TV"
@@ -26,6 +27,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        buildConfigField 'String', 'LOGIN_URL', "\"$login_url\""
         buildConfigField 'String', 'SIGN_UP_URL', "\"$sign_up_url\""
 
         buildConfigField 'String', 'FITBIT_CLIENT_ID', "\"$fitbit_ClientID\""
