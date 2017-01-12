@@ -35,9 +35,6 @@ public class DeviceHandler implements Device.StepsListener {
 
     public void setDevice(Device device) {
         this.device = device;
-        if (device != null) {
-            setStepListener();
-        }
     }
 
     public void connectDevice(FragmentActivity context, int deviceType) {
@@ -60,9 +57,6 @@ public class DeviceHandler implements Device.StepsListener {
 
                 break;
         }
-        if (device != null) {
-            setStepListener();
-        }
     }
 
     public void removeConnectedDevice(FragmentActivity activity) {
@@ -73,10 +67,6 @@ public class DeviceHandler implements Device.StepsListener {
         if (deviceResponseListener != null) {
             device.requestSteps();
         }
-    }
-
-    public void setStepListener() {
-
     }
 
     public void setDeviceResponseListener(DeviceResponseListener deviceResponseListener) {

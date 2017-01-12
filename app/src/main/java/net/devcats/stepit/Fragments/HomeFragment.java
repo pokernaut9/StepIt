@@ -79,7 +79,7 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
         btnClearPreferences.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PreferencesUtils.getInstance(getContext()).clear();
+                PreferencesUtils.getInstance().clear(getContext());
             }
         });
     }

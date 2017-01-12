@@ -37,8 +37,8 @@ public class FitBitDevice extends Device {
     public FitBitDevice(Context context) {
         setType(Device.TYPE_FIT_BIT);
 
-        fitBitToken = PreferencesUtils.getInstance(context).getString(KEY_FITBIT_TOKEN);
-        fitBitTokenType = PreferencesUtils.getInstance(context).getString(KEY_FITBIT_TOKEN_TYPE);
+        fitBitToken = PreferencesUtils.getInstance().getString(context, KEY_FITBIT_TOKEN);
+        fitBitTokenType = PreferencesUtils.getInstance().getString(context, KEY_FITBIT_TOKEN_TYPE);
     }
 
     @Override
@@ -67,10 +67,10 @@ public class FitBitDevice extends Device {
 
     public void parseFitBitLoginResponse(Context context, String response) {
         fitBitToken = extractToken(response);
-        PreferencesUtils.getInstance(context).setString(KEY_FITBIT_TOKEN, fitBitToken);
+        PreferencesUtils.getInstance().setString(context, KEY_FITBIT_TOKEN, fitBitToken);
 
         fitBitTokenType = extractTokenType(response);
-        PreferencesUtils.getInstance(context).setString(KEY_FITBIT_TOKEN_TYPE, fitBitTokenType);
+        PreferencesUtils.getInstance().setString(context, KEY_FITBIT_TOKEN_TYPE, fitBitTokenType);
     }
 
     private String extractToken(String response) {
@@ -152,8 +152,8 @@ public class FitBitDevice extends Device {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            PreferencesUtils.getInstance(context).remove(KEY_FITBIT_TOKEN);
-            PreferencesUtils.getInstance(context).remove(KEY_FITBIT_TOKEN_TYPE);
+            PreferencesUtils.getInstance().remove(context, KEY_FITBIT_TOKEN);
+            PreferencesUtils.getInstance().remove(context, KEY_FITBIT_TOKEN_TYPE);
 
             deviceListener.onDeviceRemoved();
         }

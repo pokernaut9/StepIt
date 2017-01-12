@@ -17,7 +17,6 @@ import com.google.android.gms.fitness.result.DailyTotalResult;
 
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Utils.LogUtils;
-import net.devcats.stepit.Utils.PreferencesUtils;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
 import static com.google.android.gms.fitness.data.Field.FIELD_STEPS;

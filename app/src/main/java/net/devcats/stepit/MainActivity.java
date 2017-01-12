@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
         // Do we already have a user logged in?
         } else if (userHandler.getUser() != null && userHandler.getUser().getId() > 0) {
 
-            int deviceType = PreferencesUtils.getInstance(this).getInt(Device.KEY_DEVICE_TYPE);
+            int deviceType = PreferencesUtils.getInstance().getInt(this, Device.KEY_DEVICE_TYPE);
 
             // Let them select device or load existing device
             if (deviceType < 0) {

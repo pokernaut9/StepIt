@@ -7,7 +7,6 @@ import net.devcats.stepit.Utils.PreferencesUtils;
 /**
  * Created by Ken Juarez on 12/18/16.
  * Used to hold information about the selected device.
- * Device must be gson saved BEFORE listeners are attached.
  */
 
 public abstract class Device {
@@ -32,13 +31,13 @@ public abstract class Device {
     protected StepsListener stepsListener;
 
     public void connect(FragmentActivity activity) {
-        PreferencesUtils.getInstance(activity).setInt(Device.KEY_DEVICE_TYPE, type);
+        PreferencesUtils.getInstance().setInt(activity, Device.KEY_DEVICE_TYPE, type);
     }
 
     public abstract void requestSteps();
 
     public void remove(FragmentActivity activity) {
-        PreferencesUtils.getInstance(activity).remove(Device.KEY_DEVICE_TYPE);
+        PreferencesUtils.getInstance().remove(activity, Device.KEY_DEVICE_TYPE);
     }
 
     public int getType() {
