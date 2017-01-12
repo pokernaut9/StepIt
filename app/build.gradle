@@ -8,6 +8,8 @@ android {
     def environment_release = "release"
     def environment_debug = "debug"
 
+    def sign_up_url = "http://devcats.net/stepit/"
+
     def fitbit_ClientID = "2286TV"
     def fitbit_ClientSecret = "2b01a4e5a5b2087356071a2ae4202772"
     def fitbit_RedirectUri = "stepit://callback"
@@ -23,6 +25,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'SIGN_UP_URL', "\"$sign_up_url\""
 
         buildConfigField 'String', 'FITBIT_CLIENT_ID', "\"$fitbit_ClientID\""
         buildConfigField 'String', 'FITBIT_CLIENT_SECRET', "\"$fitbit_ClientSecret\""

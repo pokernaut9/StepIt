@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import net.devcats.stepit.Model.UserModel;
+import net.devcats.stepit.Utils.PreferencesUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Ken Juarez on 12/17/16.
@@ -35,14 +39,27 @@ public class UserHandler {
     }
 
     public void saveUser(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(context.getApplicationInfo().name, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_USER_DATA, new Gson().toJson(user));
-        editor.apply();
+        PreferencesUtils.getInstance().setString(context, KEY_USER_DATA, new Gson().toJson(user));
     }
 
     public UserModel loadUser(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(context.getApplicationInfo().name, Context.MODE_PRIVATE);
-        return user = new Gson().fromJson(preferences.getString(KEY_USER_DATA, ""), UserModel.class);
+        return user = new Gson().fromJson(PreferencesUtils.getInstance().getString(context, KEY_USER_DATA), UserModel.class);
+    }
+
+    public boolean parseAndSaveUserFromJSON(Context context, JSONObject object) {
+        try {
+            user = new UserModel();
+
+            user.setId(object.getInt("id"));
+            user.setName(object.getString("name"));
+            user.setEmail(object.getString("email"));
+
+            saveUser(context);
+
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

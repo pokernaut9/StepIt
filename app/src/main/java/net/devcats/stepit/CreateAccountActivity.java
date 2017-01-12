@@ -1,5 +1,7 @@
 package net.devcats.stepit;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,11 +10,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Utils.LogUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by Ken Juarez on 1/12/17.
@@ -52,8 +63,17 @@ public class CreateAccountActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (validateForm()) {
 
-                    // TODO: create call to server to create account
-                    Toast.makeText(CreateAccountActivity.this, "Ah yeah!", Toast.LENGTH_LONG).show();
+                    try {
+                        JSONObject object = new JSONObject();
+                        object.put("name", txtName.getText().toString());
+                        object.put("email", txtEmailAddress.getText().toString());
+                        object.put("password", txtPassword.getText().toString());
+
+                        new CreateAccountTask().execute(object);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else {
 
                     // TODO: highlight field with error
@@ -65,6 +85,9 @@ public class CreateAccountActivity extends AppCompatActivity {
         tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(CreateAccountActivity.this, LoginActivity.class);
+                startActivity(intent);
+
                 finish();
             }
         });
@@ -79,19 +102,65 @@ public class CreateAccountActivity extends AppCompatActivity {
     private boolean validateForm() {
 
         if (txtName.getText().length() <= 3) {
-            LogUtils.d("name");
+            LogUtils.e("Error in checking name");
             return false;
         } else if (txtEmailAddress.getText().length() < 10 || !txtEmailAddress.getText().toString().contains("@") || !txtEmailAddress.getText().toString().contains(".")) {
-            LogUtils.d("email");
+            LogUtils.e("Error in checking email");
             return false;
         } else if (txtPassword.getText().length() < 4 || txtPassword.getText().length() > 25) {
-            LogUtils.d("password");
+            LogUtils.e("Error in checking password");
             return false;
         } else if (!txtConfirmPassword.getText().toString().equals(txtPassword.getText().toString())) {
-            LogUtils.d("password check");
+            LogUtils.e("Error in checking password match check");
             return false;
         }
 
         return true;
+    }
+
+    private class CreateAccountTask extends AsyncTask<JSONObject, Void, String> {
+
+        @Override
+        protected String doInBackground(JSONObject... objects) {
+
+            try {
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+                OkHttpClient client = new OkHttpClient();
+
+                RequestBody body = RequestBody.create(JSON, objects[0].toString());
+                Request request = new Request.Builder()
+                        .url(BuildConfig.SIGN_UP_URL)
+                        .post(body)
+                        .build();
+                Response response = client.newCall(request).execute();
+
+                return response.body().string();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            try {
+                JSONObject object = new JSONObject(result);
+
+                if (UserHandler.getInstance().parseAndSaveUserFromJSON(CreateAccountActivity.this, object)) {
+                    Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    throw new Exception(getString(R.string.error_creating_account));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(CreateAccountActivity.this, getString(R.string.error_creating_account), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

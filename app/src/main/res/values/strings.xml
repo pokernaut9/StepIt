@@ -19,5 +19,6 @@
     <string name="confirm_password">Confirm password</string>
     <string name="step_it_sign_up">StepIt Sign Up</string>
     <string name="lets_go">Let\'s Go</string>
+    <string name="error_creating_account">An error occurred while attempting to create your account. Please try again later.</string>
 
 </resources>

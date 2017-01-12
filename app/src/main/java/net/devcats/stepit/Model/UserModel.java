@@ -8,15 +8,8 @@ package net.devcats.stepit.Model;
 public class UserModel {
 
     private int id;
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
-
-    private Device device;
-
-//    private String fitbitToken;
-
-    private int stepCount;
+    private String name;
+    private String email;
 
     public int getId() {
         return id;
@@ -26,51 +19,20 @@ public class UserModel {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Device getDevice() {
-        return device;
-    }
-
-    public void setDevice(Device device) {
-        this.device = device;
-    }
-
-//    public String getFitbitToken() {
-//        return fitbitToken;
-//    }
-
-//    public void setFitbitToken(String fitbitToken) {
-//        this.fitbitToken = fitbitToken;
-//    }
-
-    public int getStepCount() {
-        return stepCount;
-    }
-
-    public void setStepCount(int stepCount) {
-        this.stepCount = stepCount;
-    }
 }
