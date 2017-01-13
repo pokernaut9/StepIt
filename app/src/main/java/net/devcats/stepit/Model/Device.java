@@ -27,6 +27,8 @@ public abstract class Device {
     public static final int TYPE_PHONE = 2;
 
     private int type;
+    private String description;
+
     protected DeviceListener deviceListener;
     protected StepsListener stepsListener;
 

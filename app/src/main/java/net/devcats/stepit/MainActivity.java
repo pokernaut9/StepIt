@@ -1,9 +1,12 @@
 package net.devcats.stepit;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -13,6 +16,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import net.devcats.stepit.Fragments.BaseFragment;
 import net.devcats.stepit.Fragments.HomeFragment;
@@ -22,27 +26,29 @@ import net.devcats.stepit.DeviceHandlers.FitBitDevice;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Utils.PreferencesUtils;
+import net.devcats.stepit.Utils.UiUtils;
 
 public class MainActivity extends AppCompatActivity implements BaseFragment.PushFragmentInterface, Device.DeviceListener {
+
+    // TODO: Show device type in menu
 
     private DeviceHandler deviceHandler;
     private Uri data;
     private ActionBarDrawerToggle drawerToggle;
-//    private NavigationView nvView;
+    private UserHandler userHandler;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initMenuDrawer();
-
         Intent intent = getIntent();
         data = intent.getData();
 
         deviceHandler = DeviceHandler.getInstance();
 
-        UserHandler userHandler = UserHandler.getInstance();
+        userHandler = UserHandler.getInstance();
         userHandler.loadUser(this);
 
         if (savedInstanceState != null) {
@@ -76,11 +82,18 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initMenuDrawer();
+    }
+
     private void initMenuDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationView);
 
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        setSupportActionBar(toolbar);
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open,  R.string.drawer_close) {
             @Override
@@ -96,9 +109,68 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
             }
         };
 
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+
+
         drawerLayout.addDrawerListener(drawerToggle);
 
         drawerToggle.syncState();
+
+        View header = navigationView.getHeaderView(0);
+
+        TextView tvName = (TextView) header.findViewById(R.id.tvName);
+        tvName.setText(userHandler.getUser().getName());
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+
+        switch(menuItem.getItemId()) {
+
+            case R.id.navDevice:
+                handleDeviceClicked();
+                break;
+
+            case R.id.navSignOut:
+                handleSignOutClicked();
+                break;
+        }
+
+        menuItem.setChecked(true);
+        setTitle(menuItem.getTitle());
+        drawerLayout.closeDrawers();
+    }
+
+    private void handleDeviceClicked() {
+        if (deviceHandler.getDevice() == null) {
+            pushFragment(SelectDeviceFragment.newInstance());
+        } else {
+
+            UiUtils.showYesNoDialog(
+                    this,
+                    R.string.warning, R.string.device_already_connected,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            deviceHandler.removeConnectedDevice(MainActivity.this);
+                            pushFragment(SelectDeviceFragment.newInstance());
+                        }
+                    },
+                    null
+            );
+        }
+    }
+
+    private void handleSignOutClicked() {
+        PreferencesUtils.getInstance().clear(this);
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        finish();
     }
 
     @Override

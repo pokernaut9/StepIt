@@ -21,5 +21,10 @@
     <string name="lets_go">Let\'s Go</string>
     <string name="error_logging_into_account">An error occurred while attempting to login to your account. Please try again later.</string>
     <string name="error_creating_account">An error occurred while attempting to create your account. Please try again later.</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="device">Device</string>
+    <string name="please_select_your_device">Please select your device</string>
+    <string name="warning">Warning</string>
+    <string name="device_already_connected">You already have a device connected. Would you like to disconnect your current device, and connect a different one?</string>
 
 </resources>

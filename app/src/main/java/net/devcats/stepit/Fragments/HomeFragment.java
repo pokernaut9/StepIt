@@ -13,7 +13,6 @@ import net.devcats.stepit.DeviceHandlers.FitBitDevice;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.R;
 import net.devcats.stepit.Utils.LogUtils;
-import net.devcats.stepit.Utils.PreferencesUtils;
 
 import butterknife.BindView;
 
@@ -56,9 +55,9 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (device.getType() == Device.TYPE_FIT_BIT) {
+        if (device != null && device.getType() == Device.TYPE_FIT_BIT) {
             tvToken.setText(((FitBitDevice) DeviceHandler.getInstance().getDevice()).getToken());
-        } else if (device.getType() == Device.TYPE_GOOGLE_FIT) {
+        } else if (device != null && device.getType() == Device.TYPE_GOOGLE_FIT) {
             tvToken.setText("GOOGLE FIT!!!");
         }
 
@@ -79,7 +78,7 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
         btnClearPreferences.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PreferencesUtils.getInstance().clear(getContext());
+
             }
         });
     }

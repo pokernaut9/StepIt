@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.devcats.stepit.Handlers.UserHandler;
+import net.devcats.stepit.Model.UserModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +74,12 @@ public class LoginActivity extends AppCompatActivity {
 
                         Toast.makeText(LoginActivity.this, "DEBUG MODE: Setting userid to 1", Toast.LENGTH_LONG).show();
 
-                        UserHandler.getInstance().getUser().setId(1);
+                        UserModel user = UserHandler.getInstance().getUser();
+
+                        user.setId(1);
+                        user.setEmail("pokernaut9@gmail.com");
+                        user.setName("Ken Juarez");
+
                         UserHandler.getInstance().saveUser(LoginActivity.this);
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);

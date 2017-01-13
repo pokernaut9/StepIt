@@ -1,11 +1,15 @@
 package net.devcats.stepit.Fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
 
 import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.Model.Device;
@@ -20,10 +24,8 @@ import butterknife.BindView;
 
 public class SelectDeviceFragment extends BaseFragment {
 
-    @BindView(R.id.btnFitBit)
-    Button btnFitBit;
-    @BindView(R.id.btnGoogleFit)
-    Button btnGoogleFit;
+    @BindView(R.id.gvSelectDevice)
+    GridView gvSelectDevice;
 
     public static SelectDeviceFragment newInstance() {
         return new SelectDeviceFragment();
@@ -44,18 +46,62 @@ public class SelectDeviceFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        btnGoogleFit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DeviceHandler.getInstance().connectDevice(getActivity(), Device.TYPE_GOOGLE_FIT);
-            }
-        });
+        gvSelectDevice.setAdapter(new GridViewAdapter());
+        gvSelectDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
-        btnFitBit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DeviceHandler.getInstance().connectDevice(getActivity(), Device.TYPE_FIT_BIT);
+                switch (position) {
+                    case 0:
+                        // Google Fit
+                        DeviceHandler.getInstance().connectDevice(getActivity(), Device.TYPE_GOOGLE_FIT);
+                        break;
+
+                    case 1:
+                        // FitBit
+                        DeviceHandler.getInstance().connectDevice(getActivity(), Device.TYPE_FIT_BIT);
+                        break;
+                }
             }
         });
+    }
+
+    private class GridViewAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return mThumbIds.length;
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return mThumbIds[i];
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup viewGroup) {
+            ImageView imageView;
+            if (convertView == null) {
+                // if it's not recycled, initialize some attributes
+                imageView = new ImageView(getContext());
+                imageView.setBackgroundColor(Color.WHITE);
+                imageView.setPadding(8, 8, 8, 8);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+
+            imageView.setImageResource(mThumbIds[position]);
+            return imageView;
+        }
+
+        // references to our images
+        private Integer[] mThumbIds = {
+                R.drawable.ic_google_fit,
+                R.drawable.ic_fitbit_logo
+        };
     }
 }
