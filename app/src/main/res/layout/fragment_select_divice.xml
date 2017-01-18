@@ -11,7 +11,7 @@
         android:padding="@dimen/spacing_large"
         android:gravity="center"
         android:background="@android:color/white"
-        android:textSize="@dimen/text_size_large"
+        android:textSize="@dimen/text_size_normal"
         android:text="@string/please_select_your_device"/>
 
     <GridView

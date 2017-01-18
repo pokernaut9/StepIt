@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
     private ActionBarDrawerToggle drawerToggle;
     private UserHandler userHandler;
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
         if (savedInstanceState != null) {
             return;
         }
+
+        initMenuDrawer();
 
         // Are we receiving a FitBit login?
         if (data != null && data.toString().startsWith("stepit://callback#")) {
@@ -85,13 +88,15 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
     @Override
     protected void onResume() {
         super.onResume();
-        initMenuDrawer();
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
     }
 
     private void initMenuDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationView);
+        navigationView = (NavigationView) findViewById(R.id.navigationView);
 
         setSupportActionBar(toolbar);
 
@@ -142,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
                 break;
         }
 
-        menuItem.setChecked(true);
         setTitle(menuItem.getTitle());
         drawerLayout.closeDrawers();
     }
@@ -187,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -204,10 +208,11 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
     public void onDeviceConnected(int type) {
         switch (type) {
             case Device.TYPE_GOOGLE_FIT:
-
+                navigationView.getMenu().findItem(R.id.navDevice).setTitle(R.string.google_fit_device);
                 break;
 
             case Device.TYPE_FIT_BIT:
+                navigationView.getMenu().findItem(R.id.navDevice).setTitle(R.string.fit_bit_device);
                 if (data != null) { // Only need to call this when a device is added for the first time, or updating token.
                     FitBitDevice device = (FitBitDevice) deviceHandler.getDevice();
                     if (device != null) {

@@ -26,5 +26,7 @@
     <string name="please_select_your_device">Please select your device</string>
     <string name="warning">Warning</string>
     <string name="device_already_connected">You already have a device connected. Would you like to disconnect your current device, and connect a different one?</string>
+    <string name="google_fit_device">Google Fit Device</string>
+    <string name="fit_bit_device">FitBit Device</string>
 
 </resources>
