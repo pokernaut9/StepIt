@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:paddingRight="@dimen/spacing_normal"
-        android:text="Ken Juarez"/>
+        android:paddingEnd="@dimen/spacing_normal"
+        android:paddingStart="@dimen/spacing_normal"/>
 
 </android.support.v7.widget.Toolbar>

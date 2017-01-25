@@ -29,6 +29,7 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
     private DeviceHandler deviceHandler;
     private Device device;
     private UserHandler userHandler;
+    private UpdateUsernameListener usernameListener;
 
     @BindView(R.id.imgProfileImage)
     CircleImageView imgProfileImage;
@@ -42,6 +43,10 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
     Button btnGetSteps;
     @BindView(R.id.btnClearPreferences)
     Button btnClearPreferences;
+
+    public interface UpdateUsernameListener {
+        void setUsername(String username);
+    }
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -57,6 +62,9 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
         device.requestSteps();
 
         userHandler = UserHandler.getInstance();
+
+        usernameListener = (UpdateUsernameListener) getActivity();
+        usernameListener.setUsername(userHandler.getUser().getName());
     }
 
     @Nullable

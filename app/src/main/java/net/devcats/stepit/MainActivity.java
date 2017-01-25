@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import net.devcats.stepit.Fragments.BaseFragment;
 import net.devcats.stepit.Fragments.HomeFragment;
@@ -19,16 +20,28 @@ import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Utils.PreferencesUtils;
 import net.devcats.stepit.Utils.UiUtils;
 
-public class MainActivity extends AppCompatActivity implements BaseFragment.PushFragmentInterface, Device.DeviceListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+public class MainActivity extends AppCompatActivity implements
+        BaseFragment.PushFragmentInterface,
+        Device.DeviceListener,
+        HomeFragment.UpdateUsernameListener {
 
     private DeviceHandler deviceHandler;
     private Uri data;
     private UserHandler userHandler;
+    private Unbinder unbinder;
+
+    @BindView(R.id.tvUsername)
+    TextView tvUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        unbinder = ButterKnife.bind(this);
 
         Intent intent = getIntent();
         data = intent.getData();
@@ -70,13 +83,25 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         initToolbar();
     }
 
+    @Override
+    public void setUsername(String username) {
+        tvUsername.setText(username);
+    }
+
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        tvUsername = (TextView) toolbar.findViewById(R.id.tvUsername);
         setSupportActionBar(toolbar);
     }
 
