@@ -3,7 +3,9 @@ package net.devcats.stepit.Utils;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Created by Ken Juarez on 12/19/16.
@@ -26,5 +28,9 @@ public class UiUtils {
                 .setPositiveButton(android.R.string.yes, positiveListener)
                 .setNegativeButton(android.R.string.no, negativeListener)
                 .create().show();
+    }
+
+    public static String formatNumber(int number) {
+        return NumberFormat.getNumberInstance(Locale.US).format(number);
     }
 }

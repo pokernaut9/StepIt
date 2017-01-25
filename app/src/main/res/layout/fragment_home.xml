@@ -2,7 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="@dimen/spacing_normal">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/imgProfileImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:src="@drawable/ic_blank_user"
+        app:civ_border_width="2dp"
+        app:civ_border_color="?attr/colorPrimaryDark"/>
+
+    <TextView
+        android:id="@+id/tvStepCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:textSize="@dimen/text_size_large"
+        android:textColor="?attr/colorPrimaryDark"/>
 
     <TextView
         android:id="@+id/tvToken"
@@ -27,6 +47,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Clear Preferences!"/>
-
 
 </LinearLayout>

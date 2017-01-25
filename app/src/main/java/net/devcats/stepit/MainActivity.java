@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
             return;
         }
 
-        initToolbar();
-
         // Are we receiving a FitBit login?
         if (data != null && data.toString().startsWith("stepit://callback#")) {
 
@@ -69,6 +67,12 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Push
 
             finish();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initToolbar();
     }
 
     private void initToolbar() {

@@ -10,11 +10,14 @@ import android.widget.TextView;
 
 import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.DeviceHandlers.FitBitDevice;
+import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.R;
 import net.devcats.stepit.Utils.LogUtils;
+import net.devcats.stepit.Utils.UiUtils;
 
 import butterknife.BindView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Ken Juarez on 12/17/16.
@@ -23,6 +26,14 @@ import butterknife.BindView;
 
 public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceResponseListener {
 
+    private DeviceHandler deviceHandler;
+    private Device device;
+    private UserHandler userHandler;
+
+    @BindView(R.id.imgProfileImage)
+    CircleImageView imgProfileImage;
+    @BindView(R.id.tvStepCount)
+    TextView tvStepCount;
     @BindView(R.id.tvToken)
     TextView tvToken;
     @BindView(R.id.btnDisconnectDevice)
@@ -32,8 +43,6 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
     @BindView(R.id.btnClearPreferences)
     Button btnClearPreferences;
 
-    private Device device;
-
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
@@ -41,8 +50,13 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DeviceHandler.getInstance().setDeviceResponseListener(this);
-        device = DeviceHandler.getInstance().getDevice();
+        deviceHandler = DeviceHandler.getInstance();
+        deviceHandler.setDeviceResponseListener(this);
+
+        device = deviceHandler.getDevice();
+        device.requestSteps();
+
+        userHandler = UserHandler.getInstance();
     }
 
     @Nullable
@@ -54,6 +68,8 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        fetchProfileImage();
 
         if (device != null && device.getType() == Device.TYPE_FIT_BIT) {
             tvToken.setText(((FitBitDevice) DeviceHandler.getInstance().getDevice()).getToken());
@@ -83,9 +99,13 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
         });
     }
 
+    private void fetchProfileImage() {
+
+    }
+
     @Override
-    public void onStepsReceived(final int steps) {
-        tvToken.setText("STEPS!!!!: " + steps);
+    public void onStepsReceived(int steps) {
+        tvStepCount.setText(String.format(getString(R.string.step_count), UiUtils.formatNumber(steps)));
         LogUtils.d("STEPS!!!! " + steps);
     }
 }
