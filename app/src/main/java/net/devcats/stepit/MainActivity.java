@@ -20,10 +20,6 @@ import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Utils.PreferencesUtils;
 import net.devcats.stepit.Utils.UiUtils;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 public class MainActivity extends AppCompatActivity implements
         BaseFragment.PushFragmentInterface,
         Device.DeviceListener,
@@ -32,16 +28,17 @@ public class MainActivity extends AppCompatActivity implements
     private DeviceHandler deviceHandler;
     private Uri data;
     private UserHandler userHandler;
-    private Unbinder unbinder;
 
-    @BindView(R.id.tvUsername)
-    TextView tvUsername;
+    private Toolbar toolbar;
+    private TextView tvUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        unbinder = ButterKnife.bind(this);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        tvUsername = (TextView) toolbar.findViewById(R.id.tvUsername);
 
         Intent intent = getIntent();
         data = intent.getData();
@@ -83,12 +80,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         initToolbar();
@@ -96,12 +87,12 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void setUsername(String username) {
-        tvUsername.setText(username);
+        if (tvUsername != null) {
+            tvUsername.setText(username);
+        }
     }
 
     private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        tvUsername = (TextView) toolbar.findViewById(R.id.tvUsername);
         setSupportActionBar(toolbar);
     }
 
