@@ -1,11 +1,9 @@
 package net.devcats.stepit.Handlers;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import net.devcats.stepit.Model.UserModel;
-import net.devcats.stepit.Utils.PreferencesUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,11 +37,11 @@ public class UserHandler {
     }
 
     public void saveUser(Context context) {
-        PreferencesUtils.getInstance().setString(context, KEY_USER_DATA, new Gson().toJson(user));
+        PreferencesHandler.getInstance().setString(context, KEY_USER_DATA, new Gson().toJson(user));
     }
 
     public UserModel loadUser(Context context) {
-        return user = new Gson().fromJson(PreferencesUtils.getInstance().getString(context, KEY_USER_DATA), UserModel.class);
+        return user = new Gson().fromJson(PreferencesHandler.getInstance().getString(context, KEY_USER_DATA), UserModel.class);
     }
 
     public boolean parseAndSaveUserFromJSON(Context context, JSONObject object) {

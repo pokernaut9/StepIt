@@ -1,4 +1,4 @@
-package net.devcats.stepit;
+package net.devcats.stepit.UI.Login;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,11 +11,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.devcats.stepit.BuildConfig;
+import net.devcats.stepit.UI.SignUp.CreateAccountActivity;
 import net.devcats.stepit.Handlers.UserHandler;
+import net.devcats.stepit.MainActivity;
 import net.devcats.stepit.Model.UserModel;
+import net.devcats.stepit.R;
+import net.devcats.stepit.StepItApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +41,10 @@ import okhttp3.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private Unbinder unbinder;
-    
+
+    @Inject
+    UserHandler userHandler;
+
     @BindView(R.id.txtEmailAddress)
     EditText txtEmailAddress;
     @BindView(R.id.txtPassword)
@@ -48,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        StepItApplication.getAppComponent().inject(this);
         unbinder = ButterKnife.bind(this);
 
         initToolbar();
@@ -74,13 +85,13 @@ public class LoginActivity extends AppCompatActivity {
 
                         Toast.makeText(LoginActivity.this, "DEBUG MODE: Setting userid to 1", Toast.LENGTH_LONG).show();
 
-                        UserModel user = UserHandler.getInstance().getUser();
+                        UserModel user = userHandler.getUser();
 
                         user.setId(1);
                         user.setEmail("pokernaut9@gmail.com");
                         user.setName("Ken Juarez");
 
-                        UserHandler.getInstance().saveUser(LoginActivity.this);
+                        userHandler.saveUser(LoginActivity.this);
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);

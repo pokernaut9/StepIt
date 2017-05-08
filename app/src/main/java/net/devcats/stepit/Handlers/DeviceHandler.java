@@ -2,8 +2,8 @@ package net.devcats.stepit.Handlers;
 
 import android.support.v4.app.FragmentActivity;
 
-import net.devcats.stepit.DeviceHandlers.GoogleFitDevice;
-import net.devcats.stepit.DeviceHandlers.FitBitDevice;
+import net.devcats.stepit.Handlers.DeviceHandlers.GoogleFitDevice;
+import net.devcats.stepit.Handlers.DeviceHandlers.FitBitDevice;
 import net.devcats.stepit.Model.Device;
 
 /**
@@ -37,6 +37,10 @@ public class DeviceHandler implements Device.StepsListener {
         this.device = device;
     }
 
+    public int getDeviteType() {
+        return device.getType();
+    }
+
     public void connectDevice(FragmentActivity context, int deviceType) {
         switch (deviceType) {
             case Device.TYPE_GOOGLE_FIT:
@@ -59,8 +63,8 @@ public class DeviceHandler implements Device.StepsListener {
         }
     }
 
-    public void removeConnectedDevice(FragmentActivity activity) {
-        device.remove(activity);
+    public void removeConnectedDevice() {
+        device.remove();
     }
 
     public void requestSteps() {

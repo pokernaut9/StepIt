@@ -1,4 +1,4 @@
-package net.devcats.stepit.DeviceHandlers;
+package net.devcats.stepit.Handlers.DeviceHandlers;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 
 import net.devcats.stepit.Model.Device;
+import net.devcats.stepit.StepItApplication;
 import net.devcats.stepit.Utils.LogUtils;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
@@ -56,10 +57,12 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
     }
 
     @Override
-    public void remove(FragmentActivity activity) {
-        super.remove(activity);
+    public void remove() {
+        super.remove();
 
         try {
+            FragmentActivity activity = (FragmentActivity) StepItApplication.getAppComponent().context();
+
             mClient.clearDefaultAccountAndReconnect();
             mClient.stopAutoManage(activity);
             mClient.disconnect();

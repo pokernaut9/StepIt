@@ -1,4 +1,4 @@
-package net.devcats.stepit.Fragments;
+package net.devcats.stepit.UI.SelectDevice;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,9 +11,13 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import net.devcats.stepit.Base.BaseFragment;
 import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.R;
+import net.devcats.stepit.StepItApplication;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 
@@ -23,6 +27,9 @@ import butterknife.BindView;
  */
 
 public class SelectDeviceFragment extends BaseFragment {
+
+    @Inject
+    DeviceHandler deviceHandler;
 
     @BindView(R.id.gvSelectDevice)
     GridView gvSelectDevice;
@@ -34,6 +41,7 @@ public class SelectDeviceFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StepItApplication.getAppComponent().inject(this);
     }
 
     @Nullable
@@ -53,12 +61,12 @@ public class SelectDeviceFragment extends BaseFragment {
                 switch (position) {
                     case 0:
                         // Google Fit
-                        DeviceHandler.getInstance().connectDevice(getActivity(), Device.TYPE_GOOGLE_FIT);
+                        deviceHandler.connectDevice(getActivity(), Device.TYPE_GOOGLE_FIT);
                         break;
 
                     case 1:
                         // FitBit
-                        DeviceHandler.getInstance().connectDevice(getActivity(), Device.TYPE_FIT_BIT);
+                        deviceHandler.connectDevice(getActivity(), Device.TYPE_FIT_BIT);
                         break;
                 }
             }

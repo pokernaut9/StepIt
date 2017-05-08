@@ -2,7 +2,7 @@ package net.devcats.stepit.Model;
 
 import android.support.v4.app.FragmentActivity;
 
-import net.devcats.stepit.Utils.PreferencesUtils;
+import net.devcats.stepit.Handlers.PreferencesHandler;
 
 /**
  * Created by Ken Juarez on 12/18/16.
@@ -27,19 +27,18 @@ public abstract class Device {
     public static final int TYPE_PHONE = 2;
 
     private int type;
-    private String description;
 
     protected DeviceListener deviceListener;
     protected StepsListener stepsListener;
 
     public void connect(FragmentActivity activity) {
-        PreferencesUtils.getInstance().setInt(activity, Device.KEY_DEVICE_TYPE, type);
+        PreferencesHandler.getInstance().setInt(activity, Device.KEY_DEVICE_TYPE, type);
     }
 
     public abstract void requestSteps();
 
-    public void remove(FragmentActivity activity) {
-        PreferencesUtils.getInstance().remove(activity, Device.KEY_DEVICE_TYPE);
+    public void remove() {
+        PreferencesHandler.getInstance().remove(Device.KEY_DEVICE_TYPE);
     }
 
     public int getType() {

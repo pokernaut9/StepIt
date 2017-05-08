@@ -10,42 +10,46 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import net.devcats.stepit.Fragments.BaseFragment;
-import net.devcats.stepit.Fragments.HomeFragment;
-import net.devcats.stepit.Fragments.SelectDeviceFragment;
+import net.devcats.stepit.UI.Home.HomeFragment;
+import net.devcats.stepit.UI.Login.LoginActivity;
+import net.devcats.stepit.Base.BaseFragment;
+import net.devcats.stepit.UI.SelectDevice.SelectDeviceFragment;
 import net.devcats.stepit.Handlers.DeviceHandler;
-import net.devcats.stepit.DeviceHandlers.FitBitDevice;
+import net.devcats.stepit.Handlers.DeviceHandlers.FitBitDevice;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Model.Device;
-import net.devcats.stepit.Utils.PreferencesUtils;
+import net.devcats.stepit.Handlers.PreferencesHandler;
 import net.devcats.stepit.Utils.UiUtils;
+
+import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity implements
         BaseFragment.PushFragmentInterface,
-        Device.DeviceListener,
-        HomeFragment.UpdateUsernameListener {
+        Device.DeviceListener {
 
-    private DeviceHandler deviceHandler;
+    @Inject
+    DeviceHandler deviceHandler;
+    @Inject
+    UserHandler userHandler;
+    @Inject
+    PreferencesHandler preferencesHandler;
+
     private Uri data;
-    private UserHandler userHandler;
-
     private Toolbar toolbar;
-    private TextView tvUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        StepItApplication.getAppComponent().inject(this);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        tvUsername = (TextView) toolbar.findViewById(R.id.tvUsername);
+        TextView tvUsername = (TextView) toolbar.findViewById(R.id.tvUsername);
 
         Intent intent = getIntent();
         data = intent.getData();
 
-        deviceHandler = DeviceHandler.getInstance();
-
-        userHandler = UserHandler.getInstance();
         userHandler.loadUser(this);
 
         if (savedInstanceState != null) {
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements
         // Do we already have a user logged in?
         } else if (userHandler.getUser() != null && userHandler.getUser().getId() > 0) {
 
-            int deviceType = PreferencesUtils.getInstance().getInt(this, Device.KEY_DEVICE_TYPE);
+            int deviceType = preferencesHandler.getInt(this, Device.KEY_DEVICE_TYPE);
 
             // Let them select device or load existing device
             if (deviceType < 0) {
@@ -85,13 +89,6 @@ public class MainActivity extends AppCompatActivity implements
         initToolbar();
     }
 
-    @Override
-    public void setUsername(String username) {
-        if (tvUsername != null) {
-            tvUsername.setText(username);
-        }
-    }
-
     private void initToolbar() {
         setSupportActionBar(toolbar);
     }
@@ -107,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            deviceHandler.removeConnectedDevice(MainActivity.this);
+                            deviceHandler.removeConnectedDevice();
                             pushFragment(SelectDeviceFragment.newInstance());
                         }
                     },
@@ -117,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void handleSignOutClicked() {
-        PreferencesUtils.getInstance().clear(this);
+        PreferencesHandler.getInstance().clear(this);
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
         finish();
     }

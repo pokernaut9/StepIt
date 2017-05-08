@@ -1,4 +1,4 @@
-package net.devcats.stepit;
+package net.devcats.stepit.UI.SignUp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,10 +10,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.devcats.stepit.BuildConfig;
+import net.devcats.stepit.MainActivity;
+import net.devcats.stepit.UI.Login.LoginActivity;
 import net.devcats.stepit.Handlers.UserHandler;
+import net.devcats.stepit.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +38,9 @@ import okhttp3.Response;
 public class CreateAccountActivity extends AppCompatActivity {
 
     private Unbinder unbinder;
+
+    @Inject
+    UserHandler userHandler;
 
     @BindView(R.id.txtName)
     EditText txtName;
@@ -162,7 +171,7 @@ public class CreateAccountActivity extends AppCompatActivity {
             try {
                 JSONObject object = new JSONObject(result);
 
-                if (UserHandler.getInstance().parseAndSaveUserFromJSON(CreateAccountActivity.this, object)) {
+                if (userHandler.parseAndSaveUserFromJSON(CreateAccountActivity.this, object)) {
                     Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();

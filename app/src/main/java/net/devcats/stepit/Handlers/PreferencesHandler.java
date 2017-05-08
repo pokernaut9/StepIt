@@ -1,20 +1,22 @@
-package net.devcats.stepit.Utils;
+package net.devcats.stepit.Handlers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import net.devcats.stepit.StepItApplication;
 
 /**
  * Created by Ken Juarez on 12/19/16.
  * Class used to handle interaction between app and saved preferences.
  */
 
-public class PreferencesUtils {
+public class PreferencesHandler {
 
-    private static PreferencesUtils instance;
+    private static PreferencesHandler instance;
 
-    public static PreferencesUtils getInstance() {
+    public static PreferencesHandler getInstance() {
         if (instance == null) {
-            instance = new PreferencesUtils();
+            instance = new PreferencesHandler();
         }
         return instance;
     }
@@ -48,7 +50,8 @@ public class PreferencesUtils {
         preferences.edit().clear().apply();
     }
 
-    public void remove(Context context, String key) {
+    public void remove(String key) {
+        Context context = StepItApplication.getAppComponent().context();
         SharedPreferences preferences = context.getSharedPreferences(context.getApplicationInfo().name, Context.MODE_PRIVATE);
         preferences.edit().remove(key).apply();
     }

@@ -1,5 +1,6 @@
-package net.devcats.stepit.DeviceHandlers;
+package net.devcats.stepit.Handlers.DeviceHandlers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -8,14 +9,18 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 
 import net.devcats.stepit.BuildConfig;
+import net.devcats.stepit.Dagger.Components.AppComponent;
 import net.devcats.stepit.Model.Device;
+import net.devcats.stepit.Handlers.PreferencesHandler;
+import net.devcats.stepit.StepItApplication;
 import net.devcats.stepit.Utils.LogUtils;
-import net.devcats.stepit.Utils.PreferencesUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+
+import javax.inject.Inject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -34,11 +39,15 @@ public class FitBitDevice extends Device {
     private String fitBitToken;
     private String fitBitTokenType;
 
-    public FitBitDevice(Context context) {
+    @Inject
+    PreferencesHandler preferencesHandler;
+
+    public FitBitDevice(Activity context) {
+        StepItApplication.getAppComponent().inject(this);
         setType(Device.TYPE_FIT_BIT);
 
-        fitBitToken = PreferencesUtils.getInstance().getString(context, KEY_FITBIT_TOKEN);
-        fitBitTokenType = PreferencesUtils.getInstance().getString(context, KEY_FITBIT_TOKEN_TYPE);
+        fitBitToken = preferencesHandler.getString(context, KEY_FITBIT_TOKEN);
+        fitBitTokenType = preferencesHandler.getString(context, KEY_FITBIT_TOKEN_TYPE);
     }
 
     @Override
@@ -55,9 +64,10 @@ public class FitBitDevice extends Device {
     }
 
     @Override
-    public void remove(final FragmentActivity activity) {
-        super.remove(activity);
-        new FitBitSignOutTask().setContext(activity).execute();
+    public void remove() {
+        super.remove();
+        Context context = StepItApplication.getAppComponent().context();
+        new FitBitSignOutTask().setContext(context).execute();
     }
 
     @Override
@@ -67,10 +77,10 @@ public class FitBitDevice extends Device {
 
     public void parseFitBitLoginResponse(Context context, String response) {
         fitBitToken = extractToken(response);
-        PreferencesUtils.getInstance().setString(context, KEY_FITBIT_TOKEN, fitBitToken);
+        preferencesHandler.setString(context, KEY_FITBIT_TOKEN, fitBitToken);
 
         fitBitTokenType = extractTokenType(response);
-        PreferencesUtils.getInstance().setString(context, KEY_FITBIT_TOKEN_TYPE, fitBitTokenType);
+        preferencesHandler.setString(context, KEY_FITBIT_TOKEN_TYPE, fitBitTokenType);
     }
 
     private String extractToken(String response) {
@@ -152,8 +162,8 @@ public class FitBitDevice extends Device {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            PreferencesUtils.getInstance().remove(context, KEY_FITBIT_TOKEN);
-            PreferencesUtils.getInstance().remove(context, KEY_FITBIT_TOKEN_TYPE);
+            PreferencesHandler.getInstance().remove(KEY_FITBIT_TOKEN);
+            PreferencesHandler.getInstance().remove(KEY_FITBIT_TOKEN_TYPE);
 
             deviceListener.onDeviceRemoved();
         }

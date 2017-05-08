@@ -1,4 +1,4 @@
-package net.devcats.stepit.Fragments;
+package net.devcats.stepit.UI.Home;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,10 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import net.devcats.stepit.Handlers.DeviceHandler;
-import net.devcats.stepit.Handlers.UserHandler;
-import net.devcats.stepit.Model.Device;
+import net.devcats.stepit.Base.BaseFragment;
 import net.devcats.stepit.Model.Post;
 import net.devcats.stepit.R;
 import net.devcats.stepit.Utils.LogUtils;
@@ -29,15 +28,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Fragment that is used as a dashboard once user is logged in and has a selected device.
  */
 
-public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceResponseListener {
+public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.HomeFragmentView {
 
-    private Device device;
     private DashboardAdapter adapter;
     private SwipeRefreshLayout swipeContainer;
 
-    public interface UpdateUsernameListener {
-        void setUsername(String username);
-    }
+    private HomeFragmentPresenter presenter;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -46,19 +42,8 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DeviceHandler deviceHandler = DeviceHandler.getInstance();
-        deviceHandler.setDeviceResponseListener(this);
-
-        device = deviceHandler.getDevice();
-        device.requestSteps();
-
-        UserHandler userHandler = UserHandler.getInstance();
-
-        UpdateUsernameListener usernameListener = (UpdateUsernameListener) getActivity();
-        usernameListener.setUsername(userHandler.getUser().getName());
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
@@ -68,65 +53,41 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                device.requestSteps();
-            }
-        });
-
-        RecyclerView rvDashboard = (RecyclerView) view.findViewById(R.id.rvDashboard);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        rvDashboard.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
-        List<Post> temp = new ArrayList<>(5);
-
-        ///////////////// TODO: TEST CODE /////////////////
-        for (int i = 0; i < 5; i++) {
-            Post post = new Post();
-            post.setTitle("TITLE " + i);
-
-            temp.add(post);
-        }
-        ///////////////////////////////////////////////////
-
-        adapter = new DashboardAdapter(temp);
-        rvDashboard.setAdapter(adapter);
-
-        fetchProfileImage();
-//        if (device != null && device.getType() == Device.TYPE_FIT_BIT) {
-//            tvToken.setText(((FitBitDevice) DeviceHandler.getInstance().getDevice()).getToken());
-//        } else if (device != null && device.getType() == Device.TYPE_GOOGLE_FIT) {
-//            tvToken.setText("GOOGLE FIT!!!");
-//        }
-//
-//        btnDisconnectDevice.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                DeviceHandler.getInstance().removeConnectedDevice(getActivity());
-//            }
-//        });
-//
-//        btnGetSteps.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                DeviceHandler.getInstance().requestSteps();
-//            }
-//        });
-//
-//        btnClearPreferences.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+        presenter = new HomeFragmentPresenter();
+        presenter.attach(this);
+        presenter.present();
     }
 
-    private void fetchProfileImage() {
-        // TODO: Call "void updateProfilePicture(Drawable drawable)" once image is returned from Glide
-        adapter.updateProfilePicture(null); // TODO: Change null to actual image resource
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.detach();
+    }
+
+    @Override
+    public void setupUI() {
+        View view = getView();
+
+        if (view != null) {
+            swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+            swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    presenter.refresh();
+                }
+            });
+
+            RecyclerView rvDashboard = (RecyclerView) view.findViewById(R.id.rvDashboard);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+            rvDashboard.setLayoutManager(mLayoutManager);
+
+            List<Post> emptyList = new ArrayList<>();
+            adapter = new DashboardAdapter(emptyList);
+            rvDashboard.setAdapter(adapter);
+
+            // TODO: Load user profile image here with Glide
+            adapter.updateProfilePicture(null); // TODO: Change null to actual image from Glide
+        }
     }
 
     @Override
@@ -136,7 +97,20 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
         LogUtils.d("STEPS!!!! " + steps);
     }
 
-    public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    @Override
+    public void updatePosts(List<Post> posts) {
+        if (adapter != null) {
+            adapter.updatePosts(posts);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void showError() {
+        Toast.makeText(getContext(), getString(R.string.unknown_error), Toast.LENGTH_LONG).show();
+    }
+
+    private class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private static final int HEADER = 0;
         private static final int OTHER = 1;
@@ -208,6 +182,12 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
             notifyDataSetChanged();
         }
 
+        void updatePosts(List<Post> posts) {
+            mPosts.clear();
+            mPosts.addAll(posts);
+            notifyDataSetChanged();
+        }
+
         private class ViewHolderComments extends RecyclerView.ViewHolder {
             private TextView tvTitle;
 
@@ -226,12 +206,12 @@ public class HomeFragment extends BaseFragment implements DeviceHandler.DeviceRe
                 super(itemView);
 
                 imgProfileImage = (CircleImageView) itemView.findViewById(R.id.imgProfileImage);
-                imgProfileImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        DeviceHandler.getInstance().removeConnectedDevice(getActivity());
-                    }
-                });
+//                imgProfileImage.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        deviceHandler.removeConnectedDevice();
+//                    }
+//                });
                 tvStepCount = (TextView) itemView.findViewById(R.id.tvStepCount);
             }
         }
