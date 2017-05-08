@@ -73,10 +73,6 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
         postsRepo.getPosts();
     }
 
-    void disconnectDevice() {
-        deviceHandler.removeConnectedDevice();
-    }
-
     void removeConnectedDevice() {
         deviceHandler.removeConnectedDevice();
 

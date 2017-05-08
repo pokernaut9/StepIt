@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 
 import net.devcats.stepit.BuildConfig;
-import net.devcats.stepit.Dagger.Components.AppComponent;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Handlers.PreferencesHandler;
 import net.devcats.stepit.StepItApplication;
@@ -66,8 +65,7 @@ public class FitBitDevice extends Device {
     @Override
     public void remove() {
         super.remove();
-        Context context = StepItApplication.getAppComponent().context();
-        new FitBitSignOutTask().setContext(context).execute();
+        new FitBitSignOutTask().execute();
     }
 
     @Override
@@ -134,13 +132,6 @@ public class FitBitDevice extends Device {
     }
 
     private class FitBitSignOutTask extends AsyncTask<Void, Void, Void> {
-
-        private Context context;
-
-        public FitBitSignOutTask setContext(Context context) {
-            this.context = context;
-            return this;
-        }
 
         @Override
         protected Void doInBackground(Void... voids) {
