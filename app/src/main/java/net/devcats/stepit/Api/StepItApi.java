@@ -1,5 +1,6 @@
 package net.devcats.stepit.Api;
 
+import net.devcats.stepit.Model.ApiResponses.CreateUserResponse;
 import net.devcats.stepit.Model.ApiResponses.GetCompetitionsResponse;
 import net.devcats.stepit.Model.ApiResponses.LoginResponse;
 
@@ -16,6 +17,17 @@ public interface StepItApi {
     @POST("api/?api=login")
     Call<LoginResponse> login(@Field("email") String email,
                               @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("api/?api=createUser")
+    Call<CreateUserResponse> createUser(@Field("name") String name,
+                                        @Field("email") String email,
+                                        @Field("password") String password,
+                                        @Field("gender") String gender,
+                                        @Field("age") int age,
+                                        @Field("deviceType") String deviceType,
+                                        @Field("profilePicture") String profilePicture,
+                                        @Field("accountType") int accountType);
 
     @GET("api/?api=getCompetitions")
     Call<GetCompetitionsResponse> getCompetitions(@Query("userId") int userId,

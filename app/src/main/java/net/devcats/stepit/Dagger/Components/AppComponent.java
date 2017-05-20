@@ -12,6 +12,7 @@ import net.devcats.stepit.UI.Login.LoginActivity;
 import net.devcats.stepit.UI.SelectDevice.SelectDeviceFragment;
 import net.devcats.stepit.Handlers.DeviceHandlers.FitBitDevice;
 import net.devcats.stepit.MainActivity;
+import net.devcats.stepit.UI.SignUp.CreateAccountActivity;
 
 import dagger.Component;
 
@@ -26,5 +27,6 @@ public interface AppComponent {
     void inject(SelectDeviceFragment selectDeviceFragment);
     void inject(FitBitDevice fitBitDevice);
     void inject(HomeFragmentPresenter homeFragmentPresenter);
+    void inject(CreateAccountActivity createAccountActivity);
 
 }

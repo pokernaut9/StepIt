@@ -18,7 +18,7 @@ import butterknife.Unbinder;
  * This is the base class used for all fragments
  */
 
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     private Unbinder unbinder;
     private PushFragmentInterface pushFragmentListener;
@@ -31,7 +31,6 @@ public class BaseFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(getActivity());
     }
 
     @Override

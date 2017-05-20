@@ -1,6 +1,8 @@
 package net.devcats.stepit.UI.Home;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,15 +14,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import net.devcats.stepit.UI.Base.BaseFragment;
 import net.devcats.stepit.Model.Competition;
 import net.devcats.stepit.R;
 import net.devcats.stepit.Utils.LogUtils;
+import net.devcats.stepit.Utils.StringUtils;
 import net.devcats.stepit.Utils.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -32,7 +41,6 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
 
     private DashboardAdapter adapter;
     private SwipeRefreshLayout swipeContainer;
-
     private HomeFragmentPresenter presenter;
 
     public static HomeFragment newInstance() {
@@ -87,6 +95,13 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
     }
 
     @Override
+    public void setName(String name) {
+        if (!StringUtils.isEmpty(name)) {
+            adapter.updateName(name);
+        }
+    }
+
+    @Override
     public void onStepsReceived(int steps) {
         adapter.updateSteps(steps);
         swipeContainer.setRefreshing(false);
@@ -98,13 +113,19 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
         Toast.makeText(getContext(), getString(R.string.unknown_error), Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void updateProfilePicture(String profilePicturePath) {
+        new FetchProfileImageTask().execute(profilePicturePath);
+    }
+
     private class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private static final int HEADER = 0;
         private static final int OTHER = 1;
 
         private int stepCount;
-        private Drawable profileImage;
+        private String name;
+        private Bitmap profilePicture;
         private List<Competition> mCompetitions;
 
         DashboardAdapter(List<Competition> competitions) {
@@ -137,8 +158,13 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 ViewHolderHeader holderHeader = (ViewHolderHeader) holder;
 
                 // Set profile image
-                if (profileImage != null) {
-                    holderHeader.imgProfileImage.setImageDrawable(profileImage);
+                if (profilePicture != null) {
+                    holderHeader.imgProfileImage.setImageBitmap(profilePicture);
+                }
+
+                // Set name
+                if (!StringUtils.isEmpty(name)) {
+                    holderHeader.tvName.setText(name);
                 }
 
                 // Set step count
@@ -166,9 +192,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
             return mCompetitions.get(position - 1);
         }
 
-        void updateProfilePicture(Drawable drawable) {
-            // TODO: Be able to receive image data from Glide, and update image
-            profileImage = drawable;
+        void updateProfilePicture(Bitmap bitmap) {
+            profilePicture = bitmap;
             notifyDataSetChanged();
         }
 
@@ -180,7 +205,11 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
         void updateCompetitions(List<Competition> competitions) {
             mCompetitions.clear();
             mCompetitions.addAll(competitions);
-            this.notifyDataSetChanged();
+            notifyDataSetChanged();
+        }
+
+        public void updateName(String name) {
+            this.name = name;
         }
 
         private class ViewHolderCompetitions extends RecyclerView.ViewHolder {
@@ -195,6 +224,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
         private class ViewHolderHeader extends RecyclerView.ViewHolder {
 
             private CircleImageView imgProfileImage;
+            private TextView tvName;
             private TextView tvStepCount;
 
             ViewHolderHeader(View itemView){
@@ -207,8 +237,41 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                         presenter.removeConnectedDevice();
                     }
                 });
+                tvName = (TextView) itemView.findViewById(R.id.tvName);
                 tvStepCount = (TextView) itemView.findViewById(R.id.tvStepCount);
             }
+        }
+    }
+
+    private class FetchProfileImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+
+            Bitmap profilePicture = null;
+
+            try {
+                for (String path : params) {
+                    profilePicture = Glide
+                            .with(getActivity())
+                            .load(path)
+                            .asBitmap()
+                            .into(100, 100)
+                            .get();
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return profilePicture;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            adapter.updateProfilePicture(bitmap);
         }
     }
 }

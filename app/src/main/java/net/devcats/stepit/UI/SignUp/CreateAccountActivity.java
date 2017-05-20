@@ -10,11 +10,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.devcats.stepit.Api.StepItApi;
 import net.devcats.stepit.BuildConfig;
 import net.devcats.stepit.MainActivity;
+import net.devcats.stepit.Model.ApiResponses.CreateUserResponse;
+import net.devcats.stepit.Model.ApiResponses.LoginResponse;
+import net.devcats.stepit.StepItApplication;
 import net.devcats.stepit.UI.Login.LoginActivity;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.R;
+import net.devcats.stepit.Utils.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +34,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Ken Juarez on 1/12/17.
@@ -39,6 +46,8 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private Unbinder unbinder;
 
+    @Inject
+    StepItApi stepItApi;
     @Inject
     UserHandler userHandler;
 
@@ -63,6 +72,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StepItApplication.getAppComponent().inject(this);
         setContentView(R.layout.activity_create_account);
         unbinder = ButterKnife.bind(this);
 
@@ -75,17 +85,7 @@ public class CreateAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validateForm()) {
-                    try {
-                        JSONObject object = new JSONObject();
-                        object.put("name", txtName.getText().toString());
-                        object.put("email", txtEmailAddress.getText().toString());
-                        object.put("password", txtPassword.getText().toString());
-
-                        new CreateAccountTask().execute(object);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    createUser(txtName.getText().toString(), txtEmailAddress.getText().toString(), txtPassword.getText().toString());
                 }
             }
         });
@@ -98,6 +98,34 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                 finish();
             }
+        });
+    }
+
+    private void createUser(String name, String email, String password) {
+        String encryptedPassword = StringUtils.encrypt(password);
+
+        Call<CreateUserResponse> createUserResponseCall = stepItApi.createUser(name, email, encryptedPassword, "Female", 7, "FitBit", "", 3);
+
+        createUserResponseCall.enqueue(new Callback<CreateUserResponse>() {
+            @Override
+            public void onResponse(Call<CreateUserResponse> call, retrofit2.Response<CreateUserResponse> response) {
+                CreateUserResponse createUserResponse = response.body();
+
+                if (createUserResponse.getSuccess()) {
+                    userHandler.setUser(createUserResponse.getDetails().getUser());
+                    Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(CreateAccountActivity.this, getString(R.string.error_logging_into_account), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CreateUserResponse> call, Throwable t) {
+                t.printStackTrace();
+            }
+
         });
     }
 

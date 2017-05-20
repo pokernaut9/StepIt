@@ -1,5 +1,10 @@
 package net.devcats.stepit.UI.Home;
 
+import android.graphics.Bitmap;
+import android.view.View;
+
+import com.bumptech.glide.Glide;
+
 import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Model.Competition;
@@ -33,8 +38,12 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     }
 
     void present() {
+        view.setName(userHandler.getUser().getName());
+        view.updateProfilePicture(userHandler.getUser().getProfilePicture());
+
         deviceHandler.requestSteps();
         competitionsRepository.getCompetitions();
+
 
 //        btnDisconnectDevice.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -87,8 +96,11 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     }
 
     interface HomeFragmentView {
+        void setName(String name);
         void onStepsReceived(int steps);
         void onCompetitionsReceived(List<Competition> competitions);
         void showError();
+
+        void updateProfilePicture(String profilePicturePath);
     }
 }
