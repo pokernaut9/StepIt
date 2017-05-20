@@ -1,5 +1,6 @@
 package net.devcats.stepit.Model;
 
+import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 
 import net.devcats.stepit.Handlers.PreferencesHandler;
@@ -31,8 +32,8 @@ public abstract class Device {
     protected DeviceListener deviceListener;
     protected StepsListener stepsListener;
 
-    public void connect(FragmentActivity activity) {
-        PreferencesHandler.getInstance().setInt(activity, Device.KEY_DEVICE_TYPE, type);
+    public void connect(FragmentActivity context) {
+        PreferencesHandler.getInstance().setInt(Device.KEY_DEVICE_TYPE, type);
     }
 
     public abstract void requestSteps();

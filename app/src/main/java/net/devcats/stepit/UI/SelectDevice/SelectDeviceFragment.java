@@ -1,5 +1,6 @@
 package net.devcats.stepit.UI.SelectDevice;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,12 +11,16 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import net.devcats.stepit.Base.BaseFragment;
+import net.devcats.stepit.Handlers.UserHandler;
+import net.devcats.stepit.MainActivity;
+import net.devcats.stepit.UI.Base.BaseFragment;
 import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.R;
 import net.devcats.stepit.StepItApplication;
+import net.devcats.stepit.UI.Login.LoginActivity;
 
 import javax.inject.Inject;
 
@@ -30,7 +35,11 @@ public class SelectDeviceFragment extends BaseFragment {
 
     @Inject
     DeviceHandler deviceHandler;
+    @Inject
+    UserHandler userHandler;
 
+    @BindView(R.id.tvTitle)
+    TextView tvTitle;
     @BindView(R.id.gvSelectDevice)
     GridView gvSelectDevice;
 
@@ -53,6 +62,16 @@ public class SelectDeviceFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        tvTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userHandler.removeUser();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
 
         gvSelectDevice.setAdapter(new GridViewAdapter());
         gvSelectDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {

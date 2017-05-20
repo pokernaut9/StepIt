@@ -51,7 +51,7 @@ public class DeviceHandler implements Device.StepsListener {
                 break;
 
             case Device.TYPE_FIT_BIT:
-                device = new FitBitDevice(context);
+                device = new FitBitDevice();
                 device.registerListener((Device.DeviceListener) context);
                 device.registerStepsListener(this);
                 device.connect(context);

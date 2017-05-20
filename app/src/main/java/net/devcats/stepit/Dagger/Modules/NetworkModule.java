@@ -34,7 +34,7 @@ public class NetworkModule {
                 Timber.i(message);
             }
         });
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         return interceptor;
     }
 

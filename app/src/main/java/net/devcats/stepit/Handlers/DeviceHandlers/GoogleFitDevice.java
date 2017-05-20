@@ -1,5 +1,6 @@
 package net.devcats.stepit.Handlers.DeviceHandlers;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,15 +38,14 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
     }
 
     @Override
-    public void connect(FragmentActivity activity) {
-        super.connect(activity);
-
-        mClient = new GoogleApiClient.Builder(activity)
+    public void connect(FragmentActivity context) {
+        super.connect(context);
+        mClient = new GoogleApiClient.Builder(context)
                 .addApi(Fitness.HISTORY_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .enableAutoManage(activity, 0, new GoogleApiClient.OnConnectionFailedListener() {
+                .enableAutoManage(context, 0, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                         LogUtils.e("Google Play services connection failed. Cause: " + connectionResult.toString());

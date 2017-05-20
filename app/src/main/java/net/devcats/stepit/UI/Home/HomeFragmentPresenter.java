@@ -2,22 +2,22 @@ package net.devcats.stepit.UI.Home;
 
 import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.Handlers.UserHandler;
-import net.devcats.stepit.Model.Post;
-import net.devcats.stepit.Repositories.PostsRepository;
+import net.devcats.stepit.Model.Competition;
+import net.devcats.stepit.Handlers.CompetitionsHandler;
 import net.devcats.stepit.StepItApplication;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListener, PostsRepository.PostsRepositoryCallbacks {
+public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListener, CompetitionsHandler.CompetitionsRepositoryCallbacks {
 
     @Inject
     DeviceHandler deviceHandler;
     @Inject
     UserHandler userHandler;
     @Inject
-    PostsRepository postsRepo;
+    CompetitionsHandler competitionsRepository;
 
     private HomeFragmentView view;
 
@@ -29,14 +29,12 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
         view = homeFragmentView;
 
         deviceHandler.setDeviceResponseListener(this);
-        postsRepo.setListener(this);
-
-        deviceHandler.requestSteps();
+        competitionsRepository.registerListener(this);
     }
 
     void present() {
-        view.setupUI();
-        postsRepo.getPosts();
+        deviceHandler.requestSteps();
+        competitionsRepository.getCompetitions();
 
 //        btnDisconnectDevice.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -64,18 +62,17 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     void detach() {
         view = null;
         deviceHandler.setDeviceResponseListener(null);
-        postsRepo.setListener(null);
+        competitionsRepository.unregisterCallback(this);
     }
 
 
     void refresh() {
         deviceHandler.requestSteps();
-        postsRepo.getPosts();
+        competitionsRepository.getCompetitions();
     }
 
     void removeConnectedDevice() {
         deviceHandler.removeConnectedDevice();
-
     }
 
     @Override
@@ -84,14 +81,14 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     }
 
     @Override
-    public void onPostsReceived(List<Post> posts) {
-        view.updatePosts(posts);
+    public void onCompetitionsReceived(List<Competition> competitions) {
+//        competitions.add(0, new Competition()); // TODO: MAJOR HACK!!! FIGURE THIS OUT
+        view.onCompetitionsReceived(competitions);
     }
 
     interface HomeFragmentView {
-        void setupUI();
         void onStepsReceived(int steps);
-        void updatePosts(List<Post> posts);
+        void onCompetitionsReceived(List<Competition> competitions);
         void showError();
     }
 }

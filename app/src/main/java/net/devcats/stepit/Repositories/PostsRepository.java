@@ -7,16 +7,6 @@ import java.util.List;
 
 public class PostsRepository {
 
-    private static PostsRepository instance;
-
-    public static PostsRepository getInstance() {
-        if (instance == null) {
-            instance = new PostsRepository();
-        }
-
-        return instance;
-    }
-
     private PostsRepositoryCallbacks callbacks;
 
     public void setListener(PostsRepositoryCallbacks callbacks) {

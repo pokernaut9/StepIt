@@ -12,7 +12,7 @@ public class RepositoryModule {
     @Provides
     @AppScope
     PostsRepository postsRepository() {
-        return PostsRepository.getInstance();
+        return new PostsRepository();
     }
 
 }

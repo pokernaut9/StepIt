@@ -3,7 +3,7 @@ package net.devcats.stepit.Handlers;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import net.devcats.stepit.Model.UserModel;
+import net.devcats.stepit.Model.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +17,7 @@ public class UserHandler {
 
     private static final String KEY_USER_DATA = "user_data";
 
-    private UserModel user;
+    private User user;
     private static UserHandler instance;
 
     public static UserHandler getInstance() {
@@ -27,37 +27,42 @@ public class UserHandler {
         return instance;
     }
 
-    public void removeUser(Context context) {
-        user = new UserModel();
-        saveUser(context);
+    public void removeUser() {
+        user = new User();
+        saveUser();
     }
 
-    public UserModel getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void saveUser(Context context) {
-        PreferencesHandler.getInstance().setString(context, KEY_USER_DATA, new Gson().toJson(user));
+    public void saveUser() {
+        PreferencesHandler.getInstance().setString(KEY_USER_DATA, new Gson().toJson(user));
     }
 
-    public UserModel loadUser(Context context) {
-        return user = new Gson().fromJson(PreferencesHandler.getInstance().getString(context, KEY_USER_DATA), UserModel.class);
+    public User loadUser() {
+        return user = new Gson().fromJson(PreferencesHandler.getInstance().getString(KEY_USER_DATA), User.class);
     }
 
-    public boolean parseAndSaveUserFromJSON(Context context, JSONObject object) {
+    public boolean parseAndSaveUserFromJSON(JSONObject object) {
         try {
-            user = new UserModel();
+            user = new User();
 
             user.setId(object.getInt("id"));
             user.setName(object.getString("name"));
             user.setEmail(object.getString("email"));
 
-            saveUser(context);
+            saveUser();
 
             return true;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        saveUser();
     }
 }

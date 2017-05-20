@@ -171,7 +171,7 @@ public class CreateAccountActivity extends AppCompatActivity {
             try {
                 JSONObject object = new JSONObject(result);
 
-                if (userHandler.parseAndSaveUserFromJSON(CreateAccountActivity.this, object)) {
+                if (userHandler.parseAndSaveUserFromJSON(object)) {
                     Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();

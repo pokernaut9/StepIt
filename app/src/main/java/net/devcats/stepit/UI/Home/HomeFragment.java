@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.devcats.stepit.Base.BaseFragment;
-import net.devcats.stepit.Model.Post;
+import net.devcats.stepit.UI.Base.BaseFragment;
+import net.devcats.stepit.Model.Competition;
 import net.devcats.stepit.R;
 import net.devcats.stepit.Utils.LogUtils;
 import net.devcats.stepit.Utils.UiUtils;
@@ -53,6 +53,22 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                presenter.refresh();
+            }
+        });
+
+        RecyclerView rvDashboard = (RecyclerView) view.findViewById(R.id.rvDashboard);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvDashboard.setLayoutManager(mLayoutManager);
+
+        List<Competition> emptyList = new ArrayList<>();
+        adapter = new DashboardAdapter(emptyList);
+        rvDashboard.setAdapter(adapter);
+
         presenter = new HomeFragmentPresenter();
         presenter.attach(this);
         presenter.present();
@@ -65,29 +81,9 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
     }
 
     @Override
-    public void setupUI() {
-        View view = getView();
-
-        if (view != null) {
-            swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
-            swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    presenter.refresh();
-                }
-            });
-
-            RecyclerView rvDashboard = (RecyclerView) view.findViewById(R.id.rvDashboard);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-            rvDashboard.setLayoutManager(mLayoutManager);
-
-            List<Post> emptyList = new ArrayList<>();
-            adapter = new DashboardAdapter(emptyList);
-            rvDashboard.setAdapter(adapter);
-
-            // TODO: Load user profile image here with Glide
-            adapter.updateProfilePicture(null); // TODO: Change null to actual image from Glide
-        }
+    public void onCompetitionsReceived(List<Competition> competitions) {
+        adapter.updateCompetitions(competitions);
+        swipeContainer.setRefreshing(false);
     }
 
     @Override
@@ -95,14 +91,6 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
         adapter.updateSteps(steps);
         swipeContainer.setRefreshing(false);
         LogUtils.d("STEPS!!!! " + steps);
-    }
-
-    @Override
-    public void updatePosts(List<Post> posts) {
-        if (adapter != null) {
-            adapter.updatePosts(posts);
-            adapter.notifyDataSetChanged();
-        }
     }
 
     @Override
@@ -117,11 +105,10 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
 
         private int stepCount;
         private Drawable profileImage;
+        private List<Competition> mCompetitions;
 
-        private List<Post> mPosts;
-
-        DashboardAdapter(List<Post> posts) {
-            mPosts = posts;
+        DashboardAdapter(List<Competition> competitions) {
+            mCompetitions = competitions;
         }
 
         @Override
@@ -131,8 +118,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.header_fragment_home, viewGroup, false);
                 return new ViewHolderHeader(v);
             } else if (viewType == OTHER){
-                View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dashboard_post, viewGroup, false);
-                return new ViewHolderComments(v);
+                View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dashboard_competition, viewGroup, false);
+                return new ViewHolderCompetitions(v);
             } else
                 throw new RuntimeException("Could not inflate layout");
         }
@@ -140,8 +127,12 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-            if (holder instanceof ViewHolderComments) {
-                ((ViewHolderComments) holder).tvTitle.setText(mPosts.get(position).getTitle());
+            if (holder instanceof ViewHolderCompetitions) {
+
+                Competition competition = getItem(position);
+
+                ViewHolderCompetitions holderCompetitions = (ViewHolderCompetitions) holder;
+                holderCompetitions.tvTitle.setText(competition.getName());
             } else if (holder instanceof ViewHolderHeader) {
                 ViewHolderHeader holderHeader = (ViewHolderHeader) holder;
 
@@ -160,7 +151,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
 
         @Override
         public int getItemCount() {
-            return mPosts.size();
+            return mCompetitions.size() + 1;
         }
 
         @Override
@@ -169,6 +160,10 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 return HEADER;
             else
                 return OTHER;
+        }
+
+        private Competition getItem(int position) {
+            return mCompetitions.get(position - 1);
         }
 
         void updateProfilePicture(Drawable drawable) {
@@ -182,16 +177,16 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
             notifyDataSetChanged();
         }
 
-        void updatePosts(List<Post> posts) {
-            mPosts.clear();
-            mPosts.addAll(posts);
-            notifyDataSetChanged();
+        void updateCompetitions(List<Competition> competitions) {
+            mCompetitions.clear();
+            mCompetitions.addAll(competitions);
+            this.notifyDataSetChanged();
         }
 
-        private class ViewHolderComments extends RecyclerView.ViewHolder {
+        private class ViewHolderCompetitions extends RecyclerView.ViewHolder {
             private TextView tvTitle;
 
-            ViewHolderComments(View itemView) {
+            ViewHolderCompetitions(View itemView) {
                 super(itemView);
                 tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
             }
@@ -206,12 +201,12 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 super(itemView);
 
                 imgProfileImage = (CircleImageView) itemView.findViewById(R.id.imgProfileImage);
-//                imgProfileImage.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        deviceHandler.removeConnectedDevice();
-//                    }
-//                });
+                imgProfileImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        presenter.removeConnectedDevice();
+                    }
+                });
                 tvStepCount = (TextView) itemView.findViewById(R.id.tvStepCount);
             }
         }

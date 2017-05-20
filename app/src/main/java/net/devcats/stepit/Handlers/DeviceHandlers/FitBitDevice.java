@@ -35,28 +35,35 @@ public class FitBitDevice extends Device {
     private final static String KEY_FITBIT_TOKEN = "key_fitbit_token";
     private final static String KEY_FITBIT_TOKEN_TYPE = "key_fitbit_token_type";
 
+    private final static String FITBIT_ERROR_EXPIRED_TOKEN_STRING = "expired_token";
+    private final static int FITBIT_ERROR_EXPIRED_TOKEN = -2;
+
     private String fitBitToken;
     private String fitBitTokenType;
+
+    private FragmentActivity fragmentActivity;
 
     @Inject
     PreferencesHandler preferencesHandler;
 
-    public FitBitDevice(Activity context) {
+    public FitBitDevice() {
         StepItApplication.getAppComponent().inject(this);
         setType(Device.TYPE_FIT_BIT);
 
-        fitBitToken = preferencesHandler.getString(context, KEY_FITBIT_TOKEN);
-        fitBitTokenType = preferencesHandler.getString(context, KEY_FITBIT_TOKEN_TYPE);
+        fitBitToken = preferencesHandler.getString(KEY_FITBIT_TOKEN);
+        fitBitTokenType = preferencesHandler.getString(KEY_FITBIT_TOKEN_TYPE);
     }
 
     @Override
-    public void connect(FragmentActivity activity) {
-        super.connect(activity);
+    public void connect(FragmentActivity context) {
+        super.connect(context);
+
+        this.fragmentActivity = context;
 
         if (fitBitToken == null || fitBitToken.isEmpty()) {
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(activity, Uri.parse(BuildConfig.FITBIT_AUTH_URL));
+            customTabsIntent.launchUrl(context, Uri.parse(BuildConfig.FITBIT_AUTH_URL));
         } else {
             deviceListener.onDeviceConnected(Device.TYPE_FIT_BIT);
         }
@@ -73,12 +80,12 @@ public class FitBitDevice extends Device {
         new FitBitGetStepsTask().execute();
     }
 
-    public void parseFitBitLoginResponse(Context context, String response) {
+    public void parseFitBitLoginResponse(String response) {
         fitBitToken = extractToken(response);
-        preferencesHandler.setString(context, KEY_FITBIT_TOKEN, fitBitToken);
+        preferencesHandler.setString(KEY_FITBIT_TOKEN, fitBitToken);
 
         fitBitTokenType = extractTokenType(response);
-        preferencesHandler.setString(context, KEY_FITBIT_TOKEN_TYPE, fitBitTokenType);
+        preferencesHandler.setString(KEY_FITBIT_TOKEN_TYPE, fitBitTokenType);
     }
 
     private String extractToken(String response) {
@@ -106,9 +113,18 @@ public class FitBitDevice extends Device {
 
                 JSONObject object = new JSONObject(response.body().string());
 
+                LogUtils.d(object.toString());
+
                 // Do we have errors from FitBit?
                 if (object.has("errors")) {
                     LogUtils.e(object.toString());
+
+                    JSONObject errorObject = object.getJSONArray("errors").getJSONObject(0);
+
+                    if (errorObject.get("errorType").equals(FITBIT_ERROR_EXPIRED_TOKEN_STRING)) {
+                        return FITBIT_ERROR_EXPIRED_TOKEN;
+                    }
+
                     return -1;
                 }
 
@@ -124,10 +140,18 @@ public class FitBitDevice extends Device {
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
 
-            if (integer < 0) {
-                LogUtils.e("ERROR: An error occurred while trying to receive steps from FitBit!");
+            switch (integer) {
+                case FITBIT_ERROR_EXPIRED_TOKEN:
+                    fitBitToken = "";
+                    fitBitTokenType = "";
+                    preferencesHandler.setString(KEY_FITBIT_TOKEN, "");
+                    preferencesHandler.setString(KEY_FITBIT_TOKEN_TYPE, "");
+                    connect(fragmentActivity);
+                    break;
+
+                default:
+                    stepsListener.onStepsReceived(integer);
             }
-            stepsListener.onStepsReceived(integer);
         }
     }
 

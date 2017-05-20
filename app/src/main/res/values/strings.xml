@@ -20,6 +20,7 @@
     <string name="step_it_sign_up">StepIt Sign Up</string>
     <string name="lets_go">Let\'s Go</string>
     <string name="error_logging_into_account">An error occurred while attempting to login to your account. Please try again later.</string>
+    <string name="error_incorrect_email_or_password">Invalid email address or password. Please try again.</string>
     <string name="error_creating_account">An error occurred while attempting to create your account. Please try again later.</string>
     <string name="sign_out">Sign Out</string>
     <string name="device">Device</string>

@@ -1,7 +1,6 @@
 package net.devcats.stepit.UI.Login;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,27 +10,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.devcats.stepit.Api.StepItApi;
 import net.devcats.stepit.BuildConfig;
+import net.devcats.stepit.Model.ApiResponses.LoginResponse;
 import net.devcats.stepit.UI.SignUp.CreateAccountActivity;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.MainActivity;
-import net.devcats.stepit.Model.UserModel;
+import net.devcats.stepit.Model.User;
 import net.devcats.stepit.R;
 import net.devcats.stepit.StepItApplication;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import net.devcats.stepit.Utils.StringUtils;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Ken Juarez on 1/12/17.
@@ -42,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private Unbinder unbinder;
 
+    @Inject
+    StepItApi stepItApi;
     @Inject
     UserHandler userHandler;
 
@@ -68,16 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (validateForm()) {
-                    try {
-                        JSONObject object = new JSONObject();
-
-                        object.put("email", txtEmailAddress.getText().toString());
-                        object.put("password", txtPassword.getText().toString());
-
-                        new LoginTask().execute(object);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    login(txtEmailAddress.getText().toString(), txtPassword.getText().toString());
                 } else {
 
                     // If we fail form validation, should we continue anyways? Since we are in debug?
@@ -85,13 +74,13 @@ public class LoginActivity extends AppCompatActivity {
 
                         Toast.makeText(LoginActivity.this, "DEBUG MODE: Setting userid to 1", Toast.LENGTH_LONG).show();
 
-                        UserModel user = userHandler.getUser();
+                        User user = userHandler.getUser();
 
                         user.setId(1);
                         user.setEmail("pokernaut9@gmail.com");
                         user.setName("Ken Juarez");
 
-                        userHandler.saveUser(LoginActivity.this);
+                        userHandler.saveUser();
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
@@ -109,6 +98,35 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
+        });
+    }
+
+    private void login(String email, String password) {
+
+        String encryptedPassword = StringUtils.encrypt(password);
+
+        Call<LoginResponse> loginResponseCall = stepItApi.login(email, encryptedPassword);
+
+        loginResponseCall.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, retrofit2.Response<LoginResponse> response) {
+                LoginResponse loginResponse = response.body();
+
+                if (loginResponse.getLoginDetails().getSuccess()) {
+                    userHandler.setUser(loginResponse.getLoginDetails().getUser());
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, getString(R.string.error_logging_into_account), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                t.printStackTrace();
+            }
+
         });
     }
 
@@ -140,57 +158,5 @@ public class LoginActivity extends AppCompatActivity {
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-    }
-
-    private class LoginTask extends AsyncTask<JSONObject, Void, String> {
-
-        @Override
-        protected String doInBackground(JSONObject... objects) {
-
-            try {
-                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-                OkHttpClient client = new OkHttpClient();
-
-                RequestBody body = RequestBody.create(JSON, objects[0].toString());
-                Request request = new Request.Builder()
-                        .url(BuildConfig.LOGIN_URL)
-                        .post(body)
-                        .build();
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            try {
-                JSONObject object = new JSONObject(result);
-
-                if (object.has("error")) {
-                    Toast.makeText(LoginActivity.this, object.getString("error"), Toast.LENGTH_LONG).show();
-                    throw new Exception(object.getString("error"));
-                }
-
-                if (UserHandler.getInstance().parseAndSaveUserFromJSON(LoginActivity.this, object)) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    Toast.makeText(LoginActivity.this, getString(R.string.error_logging_into_account), Toast.LENGTH_LONG).show();
-                    throw new Exception(getString(R.string.error_logging_into_account));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(LoginActivity.this, getString(R.string.error_logging_into_account), Toast.LENGTH_LONG).show();
-            }
-        }
     }
 }

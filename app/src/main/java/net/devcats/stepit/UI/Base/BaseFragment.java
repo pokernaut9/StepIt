@@ -1,4 +1,4 @@
-package net.devcats.stepit.Base;
+package net.devcats.stepit.UI.Base;
 
 import android.content.Context;
 import android.os.Bundle;

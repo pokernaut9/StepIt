@@ -1,10 +1,12 @@
 package net.devcats.stepit;
 
 import android.app.Application;
+import android.content.Context;
 
 import net.devcats.stepit.Dagger.Components.AppComponent;
 import net.devcats.stepit.Dagger.Components.DaggerAppComponent;
 import net.devcats.stepit.Dagger.Modules.ContextModule;
+import net.devcats.stepit.Dagger.Modules.NetworkModule;
 
 import timber.log.Timber;
 

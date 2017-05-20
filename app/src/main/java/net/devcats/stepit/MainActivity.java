@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import net.devcats.stepit.UI.Home.HomeFragment;
 import net.devcats.stepit.UI.Login.LoginActivity;
-import net.devcats.stepit.Base.BaseFragment;
+import net.devcats.stepit.UI.Base.BaseFragment;
 import net.devcats.stepit.UI.SelectDevice.SelectDeviceFragment;
 import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.Handlers.DeviceHandlers.FitBitDevice;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements
         Intent intent = getIntent();
         data = intent.getData();
 
-        userHandler.loadUser(this);
+        userHandler.loadUser();
 
         if (savedInstanceState != null) {
             return;
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements
         // Do we already have a user logged in?
         } else if (userHandler.getUser() != null && userHandler.getUser().getId() > 0) {
 
-            int deviceType = preferencesHandler.getInt(this, Device.KEY_DEVICE_TYPE);
+            int deviceType = preferencesHandler.getInt(Device.KEY_DEVICE_TYPE);
 
             // Let them select device or load existing device
             if (deviceType < 0) {
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // New user, show create account screen
         } else {
-            userHandler.removeUser(this);
+            userHandler.removeUser();
             Intent newIntent = new Intent(this, LoginActivity.class);
             startActivity(newIntent);
 
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void handleSignOutClicked() {
-        PreferencesHandler.getInstance().clear(this);
+        PreferencesHandler.getInstance().clear();
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
         finish();
     }
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (data != null) { // Only need to call this when a device is added for the first time, or updating token.
                     FitBitDevice device = (FitBitDevice) deviceHandler.getDevice();
                     if (device != null) {
-                        device.parseFitBitLoginResponse(this, data.toString());
+                        device.parseFitBitLoginResponse(data.toString());
                     }
                 }
                 break;
