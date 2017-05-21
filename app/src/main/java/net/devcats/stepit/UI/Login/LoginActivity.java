@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import net.devcats.stepit.Api.StepItApi;
 import net.devcats.stepit.BuildConfig;
-import net.devcats.stepit.Model.ApiResponses.LoginResponse;
+import net.devcats.stepit.Api.Responses.LoginResponse;
 import net.devcats.stepit.UI.SignUp.CreateAccountActivity;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.MainActivity;

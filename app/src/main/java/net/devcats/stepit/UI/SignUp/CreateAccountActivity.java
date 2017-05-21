@@ -1,7 +1,6 @@
 package net.devcats.stepit.UI.SignUp;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,36 +10,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.devcats.stepit.Api.StepItApi;
-import net.devcats.stepit.BuildConfig;
 import net.devcats.stepit.MainActivity;
-import net.devcats.stepit.Model.ApiResponses.CreateUserResponse;
-import net.devcats.stepit.Model.ApiResponses.LoginResponse;
+import net.devcats.stepit.Api.Responses.CreateUserResponse;
 import net.devcats.stepit.StepItApplication;
 import net.devcats.stepit.UI.Login.LoginActivity;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.R;
 import net.devcats.stepit.Utils.StringUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
-
-/**
- * Created by Ken Juarez on 1/12/17.
- * Activity used to create a new account
- */
 
 public class CreateAccountActivity extends AppCompatActivity {
 
@@ -165,51 +149,5 @@ public class CreateAccountActivity extends AppCompatActivity {
         }
 
         return !hasError;
-    }
-
-    private class CreateAccountTask extends AsyncTask<JSONObject, Void, String> {
-
-        @Override
-        protected String doInBackground(JSONObject... objects) {
-
-            try {
-                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-                OkHttpClient client = new OkHttpClient();
-
-                RequestBody body = RequestBody.create(JSON, objects[0].toString());
-                Request request = new Request.Builder()
-                        .url(BuildConfig.SIGN_UP_URL)
-                        .post(body)
-                        .build();
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            try {
-                JSONObject object = new JSONObject(result);
-
-                if (userHandler.parseAndSaveUserFromJSON(object)) {
-                    Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    throw new Exception(getString(R.string.error_creating_account));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(CreateAccountActivity.this, getString(R.string.error_creating_account), Toast.LENGTH_LONG).show();
-            }
-        }
     }
 }

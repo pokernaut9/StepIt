@@ -1,7 +1,7 @@
 package net.devcats.stepit.Handlers;
 
 import net.devcats.stepit.Api.StepItApi;
-import net.devcats.stepit.Model.ApiResponses.GetCompetitionsResponse;
+import net.devcats.stepit.Api.Responses.GetCompetitionsResponse;
 import net.devcats.stepit.Model.Competition;
 
 import java.util.ArrayList;
@@ -30,8 +30,8 @@ public class CompetitionsHandler {
         callbacks.remove(callback);
     }
 
-    public void getCompetitions() {
-        Call<GetCompetitionsResponse> repos = stepItApi.getCompetitions(1);
+    public void getCompetitions(int userId) {
+        Call<GetCompetitionsResponse> repos = stepItApi.getCompetitions(userId);
 
         repos.enqueue(new Callback<GetCompetitionsResponse>() {
             @Override

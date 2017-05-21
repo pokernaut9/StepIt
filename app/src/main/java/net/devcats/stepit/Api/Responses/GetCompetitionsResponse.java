@@ -1,4 +1,4 @@
-package net.devcats.stepit.Model.ApiResponses;
+package net.devcats.stepit.Api.Responses;
 
 
 import com.google.gson.annotations.SerializedName;

@@ -1,6 +1,7 @@
 package net.devcats.stepit.Handlers.DeviceHandlers;
 
 import android.content.Context;
+import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +32,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class GoogleFitDevice extends Device implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private static final int REQUEST_CODE_RESOLVE_ERR = 12341234;
     private GoogleApiClient mClient = null;
 
     public GoogleFitDevice() {
@@ -38,17 +40,24 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
     }
 
     @Override
-    public void connect(FragmentActivity context) {
-        super.connect(context);
-        mClient = new GoogleApiClient.Builder(context)
+    public void connect(final FragmentActivity fragmentActivity) {
+        super.connect(fragmentActivity);
+        mClient = new GoogleApiClient.Builder(fragmentActivity)
                 .addApi(Fitness.HISTORY_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .enableAutoManage(context, 0, new GoogleApiClient.OnConnectionFailedListener() {
+                .enableAutoManage(fragmentActivity, 0, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        LogUtils.e("Google Play services connection failed. Cause: " + connectionResult.toString());
+                        try {
+                            LogUtils.e("Google Play services connection failed. Cause: " + connectionResult.toString());
+                            if (connectionResult.hasResolution()) {
+                                connectionResult.startResolutionForResult(fragmentActivity, REQUEST_CODE_RESOLVE_ERR);
+                            }
+                        } catch (IntentSender.SendIntentException e) {
+                            e.printStackTrace();
+                        }
                     }
                 })
                 .build();

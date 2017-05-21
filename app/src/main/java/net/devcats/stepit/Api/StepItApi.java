@@ -1,8 +1,8 @@
 package net.devcats.stepit.Api;
 
-import net.devcats.stepit.Model.ApiResponses.CreateUserResponse;
-import net.devcats.stepit.Model.ApiResponses.GetCompetitionsResponse;
-import net.devcats.stepit.Model.ApiResponses.LoginResponse;
+import net.devcats.stepit.Api.Responses.CreateUserResponse;
+import net.devcats.stepit.Api.Responses.GetCompetitionsResponse;
+import net.devcats.stepit.Api.Responses.LoginResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;

@@ -9,5 +9,6 @@
     <dimen name="spacing_extra_small">4dp</dimen>
     <dimen name="text_size_title">48sp</dimen>
     <dimen name="text_size_normal">18sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_large">28sp</dimen>
 </resources>

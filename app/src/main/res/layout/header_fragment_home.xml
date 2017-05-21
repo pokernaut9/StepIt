@@ -27,7 +27,6 @@
         android:id="@+id/tvStepCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing_normal"
         android:textSize="@dimen/text_size_large"
         android:textColor="?attr/colorPrimaryDark"/>
 

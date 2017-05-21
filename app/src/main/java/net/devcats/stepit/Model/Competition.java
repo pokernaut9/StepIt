@@ -61,4 +61,8 @@ public class Competition {
     public List<User> getUsers() {
         return users;
     }
+
+    public int getParticipants() {
+        return users.size();
+    }
 }

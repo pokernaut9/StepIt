@@ -1,7 +1,6 @@
 package net.devcats.stepit.UI.Home;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,11 +24,7 @@ import net.devcats.stepit.Utils.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -153,7 +148,13 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 Competition competition = getItem(position);
 
                 ViewHolderCompetitions holderCompetitions = (ViewHolderCompetitions) holder;
+
                 holderCompetitions.tvTitle.setText(competition.getName());
+                holderCompetitions.tvDescription.setText(competition.getDescription());
+                holderCompetitions.tvParticipants.setText(competition.getParticipants() + "/" + competition.getSize());
+                holderCompetitions.tvDateRange.setText(competition.getStartDate() + " - " + competition.getEndDate());
+                holderCompetitions.tvCreatedBy.setText("" + competition.getCreatedBy());
+
             } else if (holder instanceof ViewHolderHeader) {
                 ViewHolderHeader holderHeader = (ViewHolderHeader) holder;
 
@@ -210,14 +211,23 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
 
         public void updateName(String name) {
             this.name = name;
+            notifyDataSetChanged();
         }
 
         private class ViewHolderCompetitions extends RecyclerView.ViewHolder {
             private TextView tvTitle;
+            private TextView tvDescription;
+            private TextView tvParticipants;
+            private TextView tvDateRange;
+            private TextView tvCreatedBy;
 
             ViewHolderCompetitions(View itemView) {
                 super(itemView);
                 tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
+                tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
+                tvParticipants = (TextView) itemView.findViewById(R.id.tvParticipants);
+                tvDateRange = (TextView) itemView.findViewById(R.id.tvDateRange);
+                tvCreatedBy = (TextView) itemView.findViewById(R.id.tvCreatedBy);
             }
         }
 
