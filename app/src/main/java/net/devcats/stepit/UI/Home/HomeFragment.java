@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import net.devcats.stepit.Model.User;
 import net.devcats.stepit.UI.Base.BaseFragment;
 import net.devcats.stepit.Model.Competition;
 import net.devcats.stepit.R;
@@ -150,10 +151,25 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 ViewHolderCompetitions holderCompetitions = (ViewHolderCompetitions) holder;
 
                 holderCompetitions.tvTitle.setText(competition.getName());
-                holderCompetitions.tvDescription.setText(competition.getDescription());
-                holderCompetitions.tvParticipants.setText(competition.getParticipants() + "/" + competition.getSize());
-                holderCompetitions.tvDateRange.setText(competition.getStartDate() + " - " + competition.getEndDate());
-                holderCompetitions.tvCreatedBy.setText("" + competition.getCreatedBy());
+
+                if (!StringUtils.isEmpty(competition.getDescription())) {
+                    holderCompetitions.tvDescription.setText(competition.getDescription());
+                    holderCompetitions.tvDescription.setVisibility(View.VISIBLE);
+                }
+
+                holderCompetitions.tvParticipants.setText(getString(R.string.participants, competition.getParticipants() + "/" + competition.getSize()));
+                holderCompetitions.tvDateRange.setText(StringUtils.formatDate(competition.getStartDate()) + " - " + StringUtils.formatDate(competition.getEndDate()));
+
+                String createdBy = "";
+
+                for (User user : competition.getUsers()) {
+                    if (user.getId() == competition.getCreatedBy()) {
+                        createdBy = user.getName();
+                        break;
+                    }
+                }
+
+                holderCompetitions.tvCreatedBy.setText(getString(R.string.created_by, createdBy));
 
             } else if (holder instanceof ViewHolderHeader) {
                 ViewHolderHeader holderHeader = (ViewHolderHeader) holder;
@@ -209,7 +225,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
             notifyDataSetChanged();
         }
 
-        public void updateName(String name) {
+        void updateName(String name) {
             this.name = name;
             notifyDataSetChanged();
         }

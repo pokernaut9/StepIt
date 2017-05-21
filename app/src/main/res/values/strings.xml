@@ -31,5 +31,7 @@
     <string name="fit_bit_device">FitBit Device</string>
     <string name="step_count">%1$s steps</string>
     <string name="unknown_error">Oops! An unknown error has occured. Please try again later.</string>
+    <string name="participants">Participants: %1$s</string>
+    <string name="created_by">Created by: %1$s</string>
 
 </resources>

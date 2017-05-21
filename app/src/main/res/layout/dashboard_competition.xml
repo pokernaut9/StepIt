@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -24,27 +25,35 @@
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/spacing_normal"
+                android:textStyle="bold"
+                tools:text="Competition Title - 12,345 Steps" />
 
             <TextView
                 android:id="@+id/tvDescription"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:text="Description goes here" />
 
             <TextView
                 android:id="@+id/tvParticipants"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:text="Participants: 9/10"/>
 
             <TextView
                 android:id="@+id/tvDateRange"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:text="May 1st, 2017 - May 31st, 2017"/>
 
             <TextView
                 android:id="@+id/tvCreatedBy"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:text="Created by: Ken Juarez"/>
 
         </LinearLayout>
 
