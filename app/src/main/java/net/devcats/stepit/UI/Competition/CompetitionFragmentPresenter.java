@@ -19,24 +19,25 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
     CompetitionsHandler competitionsHandler;
 
     private CompetitionFragmentView view;
-    private Competition competition;
+    private int competitionId;
 
-    CompetitionFragmentPresenter(String competitionString) {
+    CompetitionFragmentPresenter(int competitionId) {
         StepItApplication.getAppComponent().inject(this);
-        competition = new Gson().fromJson(competitionString, Competition.class);
+        this.competitionId = competitionId;
     }
 
     void attach(CompetitionFragmentView competitionFragmentView) {
         view = competitionFragmentView;
         competitionsHandler.registerListener(this);
+        competitionsHandler.getCompetitions(userHandler.getUser().getId(), competitionId);
     }
 
     void present() {
-        view.setupUI(competition);
+        view.setupUI();
     }
 
     void refresh() {
-        competitionsHandler.getCompetitions(userHandler.getUser().getId(), competition.getId());
+        competitionsHandler.getCompetitions(userHandler.getUser().getId(), competitionId);
     }
 
     void detach() {
@@ -46,11 +47,11 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
 
     @Override
     public void onCompetitionsReceived(List<Competition> competitions) {
-        view.updateCompetition(competition);
+        view.updateCompetition(competitions.get(0));
     }
 
     interface CompetitionFragmentView {
-        void setupUI(Competition competition);
+        void setupUI();
         void updateCompetition(Competition competition);
     }
 

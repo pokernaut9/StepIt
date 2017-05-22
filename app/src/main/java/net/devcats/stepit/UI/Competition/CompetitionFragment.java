@@ -6,9 +6,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 
 import net.devcats.stepit.Model.Competition;
 import net.devcats.stepit.Model.User;
@@ -44,10 +41,10 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
     private CompetitionFragmentPresenter presenter;
     private CompetitionAdapter adapter;
 
-    public static CompetitionFragment newInstance(Competition competition) {
+    public static CompetitionFragment newInstance(int competitionId) {
         CompetitionFragment competitionFragment = new CompetitionFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_COMPETITION, new Gson().toJson(competition));
+        bundle.putInt(KEY_COMPETITION, competitionId);
         competitionFragment.setArguments(bundle);
         return competitionFragment;
     }
@@ -72,7 +69,7 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        presenter = new CompetitionFragmentPresenter(getArguments().getString(KEY_COMPETITION));
+        presenter = new CompetitionFragmentPresenter(getArguments().getInt(KEY_COMPETITION));
         presenter.attach(this);
         presenter.present();
     }
@@ -89,7 +86,7 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
     }
 
     @Override
-    public void setupUI(Competition competition) {
+    public void setupUI() {
         View view = getView();
         if (view != null) {
             swipeContainer = (SwipeRefreshLayout) getView().findViewById(R.id.swipeContainer);
@@ -100,18 +97,20 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
                 }
             });
 
-            RecyclerView rvDashboard = (RecyclerView) getView().findViewById(R.id.rvCompetition);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-            rvDashboard.setLayoutManager(mLayoutManager);
-
-            adapter = new CompetitionAdapter(competition);
-            rvDashboard.setAdapter(adapter);
+            rvCompetition.setLayoutManager(mLayoutManager);
         }
     }
 
     @Override
     public void updateCompetition(Competition competition) {
-        adapter.updateCompetition(competition);
+        if (adapter == null) {
+            adapter = new CompetitionAdapter(competition);
+            rvCompetition.setAdapter(adapter);
+        } else if (competition != null) {
+            adapter.updateCompetition(competition);
+        }
+
         swipeContainer.setRefreshing(false);
     }
 
@@ -186,6 +185,7 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
 
         void updateCompetition(Competition competition) {
             this.competition = competition;
+            this.users = this.competition.getUsers();
             notifyDataSetChanged();
         }
 
@@ -230,12 +230,10 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
 
     private class FetchProfileImageTask extends AsyncTask<Void, Void, Bitmap> {
 
-
         private int userId;
         private String path;
 
         FetchProfileImageTask(int userId, String path) {
-
             this.userId = userId;
             this.path = path;
         }

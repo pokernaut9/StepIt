@@ -175,7 +175,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openCompetition(competition);
+                        openCompetition(competition.getId());
                     }
                 });
 
@@ -277,8 +277,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
         }
     }
 
-    private void openCompetition(Competition competition) {
-        pushFragment(CompetitionFragment.newInstance(competition));
+    private void openCompetition(int competitionId) {
+        pushFragment(CompetitionFragment.newInstance(competitionId));
     }
 
     private class FetchProfileImageTask extends AsyncTask<String, Void, Bitmap> {
