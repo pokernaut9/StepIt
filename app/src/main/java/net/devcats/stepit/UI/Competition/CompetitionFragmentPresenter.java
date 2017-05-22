@@ -1,7 +1,5 @@
 package net.devcats.stepit.UI.Competition;
 
-import com.google.gson.Gson;
-
 import net.devcats.stepit.Handlers.CompetitionsHandler;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Model.Competition;
