@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import net.devcats.stepit.Handlers.CompetitionsHandler;
@@ -38,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements
     CompetitionsHandler competitionsHandler;
 
     private Uri data;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         StepItApplication.getAppComponent().inject(this);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         Intent intent = getIntent();
         data = intent.getData();
@@ -88,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        initToolbar();
     }
 
     @Override
@@ -101,10 +96,6 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             super.onBackPressed();
         }
-    }
-
-    private void initToolbar() {
-        setSupportActionBar(toolbar);
     }
 
     private void handleDeviceClicked() {
