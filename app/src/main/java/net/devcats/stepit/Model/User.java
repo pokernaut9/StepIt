@@ -1,5 +1,7 @@
 package net.devcats.stepit.Model;
 
+import android.graphics.Bitmap;
+
 import com.google.gson.annotations.SerializedName;
 
 public class User {
@@ -22,6 +24,7 @@ public class User {
     private int accountType;
     @SerializedName("stepCount")
     private int stepCount;
+    private Bitmap profileImage;
 
     public int getId() {
         return id;
@@ -93,5 +96,13 @@ public class User {
 
     public void setStepCount(int stepCount) {
         this.stepCount = stepCount;
+    }
+
+    public Bitmap getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Bitmap profileImage) {
+        this.profileImage = profileImage;
     }
 }

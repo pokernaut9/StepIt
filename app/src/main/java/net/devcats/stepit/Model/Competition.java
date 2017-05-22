@@ -2,6 +2,9 @@ package net.devcats.stepit.Model;
 
 import com.google.gson.annotations.SerializedName;
 
+import net.devcats.stepit.Utils.DateUtils;
+import net.devcats.stepit.Utils.StringUtils;
+
 import java.util.Date;
 import java.util.List;
 
@@ -64,5 +67,9 @@ public class Competition {
 
     public int getParticipants() {
         return users.size();
+    }
+
+    public String getDateRange() {
+        return DateUtils.formatDate(getStartDate()) + " - " + DateUtils.formatDate(getEndDate());
     }
 }

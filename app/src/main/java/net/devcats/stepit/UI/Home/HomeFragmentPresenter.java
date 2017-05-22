@@ -17,7 +17,7 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     @Inject
     UserHandler userHandler;
     @Inject
-    CompetitionsHandler competitionsRepository;
+    CompetitionsHandler competitionsHandler;
 
     private HomeFragmentView view;
 
@@ -29,7 +29,7 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
         view = homeFragmentView;
 
         deviceHandler.setDeviceResponseListener(this);
-        competitionsRepository.registerListener(this);
+        competitionsHandler.registerListener(this);
     }
 
     void present() {
@@ -37,7 +37,7 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
         view.updateProfilePicture(userHandler.getUser().getProfilePicture());
 
         deviceHandler.requestSteps();
-        competitionsRepository.getCompetitions(userHandler.getUser().getId());
+        competitionsHandler.getCompetitions(userHandler.getUser().getId());
 
 
 //        btnDisconnectDevice.setOnClickListener(new View.OnClickListener() {
@@ -66,13 +66,13 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     void detach() {
         view = null;
         deviceHandler.setDeviceResponseListener(null);
-        competitionsRepository.unregisterCallback(this);
+        competitionsHandler.unregisterCallback(this);
     }
 
 
     void refresh() {
         deviceHandler.requestSteps();
-        competitionsRepository.getCompetitions(userHandler.getUser().getId());
+        competitionsHandler.getCompetitions(userHandler.getUser().getId());
     }
 
     void removeConnectedDevice() {
@@ -81,12 +81,12 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
 
     @Override
     public void onStepsReceived(int steps) {
+        competitionsHandler.updateUsersSteps(userHandler.getUser().getId(), steps);
         view.onStepsReceived(steps);
     }
 
     @Override
     public void onCompetitionsReceived(List<Competition> competitions) {
-//        competitions.add(0, new Competition()); // TODO: MAJOR HACK!!! FIGURE THIS OUT
         view.onCompetitionsReceived(competitions);
     }
 

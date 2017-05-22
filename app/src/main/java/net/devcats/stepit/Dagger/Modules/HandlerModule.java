@@ -22,7 +22,7 @@ public class HandlerModule {
     @Provides
     @AppScope
     UserHandler userHandler() {
-        return UserHandler.getInstance();
+        return new UserHandler();
     }
 
     @Provides

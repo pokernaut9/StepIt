@@ -19,6 +19,7 @@ import net.devcats.stepit.Model.User;
 import net.devcats.stepit.UI.Base.BaseFragment;
 import net.devcats.stepit.Model.Competition;
 import net.devcats.stepit.R;
+import net.devcats.stepit.UI.Competition.CompetitionFragment;
 import net.devcats.stepit.Utils.LogUtils;
 import net.devcats.stepit.Utils.StringUtils;
 import net.devcats.stepit.Utils.UiUtils;
@@ -146,7 +147,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
 
             if (holder instanceof ViewHolderCompetitions) {
 
-                Competition competition = getItem(position);
+                final Competition competition = getItem(position);
 
                 ViewHolderCompetitions holderCompetitions = (ViewHolderCompetitions) holder;
 
@@ -158,7 +159,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 }
 
                 holderCompetitions.tvParticipants.setText(getString(R.string.participants, competition.getParticipants() + "/" + competition.getSize()));
-                holderCompetitions.tvDateRange.setText(StringUtils.formatDate(competition.getStartDate()) + " - " + StringUtils.formatDate(competition.getEndDate()));
+                holderCompetitions.tvDateRange.setText(competition.getDateRange());
 
                 String createdBy = "";
 
@@ -170,6 +171,13 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 }
 
                 holderCompetitions.tvCreatedBy.setText(getString(R.string.created_by, createdBy));
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openCompetition(competition);
+                    }
+                });
 
             } else if (holder instanceof ViewHolderHeader) {
                 ViewHolderHeader holderHeader = (ViewHolderHeader) holder;
@@ -267,6 +275,10 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
                 tvStepCount = (TextView) itemView.findViewById(R.id.tvStepCount);
             }
         }
+    }
+
+    private void openCompetition(Competition competition) {
+        pushFragment(CompetitionFragment.newInstance(competition));
     }
 
     private class FetchProfileImageTask extends AsyncTask<String, Void, Bitmap> {

@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import net.devcats.stepit.UI.Competition.CompetitionFragment;
 import net.devcats.stepit.UI.Home.HomeFragment;
 import net.devcats.stepit.UI.Login.LoginActivity;
 import net.devcats.stepit.UI.Base.BaseFragment;
@@ -89,6 +90,17 @@ public class MainActivity extends AppCompatActivity implements
         initToolbar();
     }
 
+    @Override
+    public void onBackPressed() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+        if (currentFragment instanceof CompetitionFragment) {
+            removeFragment(currentFragment);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void initToolbar() {
         setSupportActionBar(toolbar);
     }
@@ -121,7 +133,17 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+
+        switch (item.getItemId()) {
+
+            case android.R.id.home:
+                removeFragment(getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override

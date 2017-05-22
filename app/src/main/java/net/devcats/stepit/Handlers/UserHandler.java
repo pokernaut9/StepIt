@@ -1,30 +1,39 @@
 package net.devcats.stepit.Handlers;
 
-import android.content.Context;
-
 import com.google.gson.Gson;
+
+import net.devcats.stepit.Api.Responses.UpdateStepsResponse;
+import net.devcats.stepit.Api.StepItApi;
 import net.devcats.stepit.Model.User;
+import net.devcats.stepit.StepItApplication;
+import net.devcats.stepit.Utils.DateUtils;
+import net.devcats.stepit.Utils.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Ken Juarez on 12/17/16.
- * Used to manage all activity with the current StepIt user
- */
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserHandler {
 
     private static final String KEY_USER_DATA = "user_data";
 
-    private User user;
-    private static UserHandler instance;
+    @Inject
+    StepItApi stepItApi;
 
-    public static UserHandler getInstance() {
-        if (instance == null) {
-            instance = new UserHandler();
-        }
-        return instance;
+    private User user;
+
+
+    public UserHandler() {
+        StepItApplication.getAppComponent().inject(this);
     }
 
     public void removeUser() {
@@ -42,23 +51,6 @@ public class UserHandler {
 
     public User loadUser() {
         return user = new Gson().fromJson(PreferencesHandler.getInstance().getString(KEY_USER_DATA), User.class);
-    }
-
-    public boolean parseAndSaveUserFromJSON(JSONObject object) {
-        try {
-            user = new User();
-
-            user.setId(object.getInt("id"));
-            user.setName(object.getString("name"));
-            user.setEmail(object.getString("email"));
-
-            saveUser();
-
-            return true;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public void setUser(User user) {

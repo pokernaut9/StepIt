@@ -3,6 +3,7 @@ package net.devcats.stepit.Api;
 import net.devcats.stepit.Api.Responses.CreateUserResponse;
 import net.devcats.stepit.Api.Responses.GetCompetitionsResponse;
 import net.devcats.stepit.Api.Responses.LoginResponse;
+import net.devcats.stepit.Api.Responses.UpdateStepsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -35,5 +36,11 @@ public interface StepItApi {
 
     @GET("api/?api=getCompetitions")
     Call<GetCompetitionsResponse> getCompetitions(@Query("userId") int userId);
+
+    @FormUrlEncoded
+    @POST("api/?api=updateSteps")
+    Call<UpdateStepsResponse> updateSteps(@Field("userId") int userId,
+                                          @Field("date") String date,
+                                          @Field("stepCount") int stepCount);
 
 }

@@ -7,6 +7,8 @@ import net.devcats.stepit.Dagger.Modules.ContextModule;
 import net.devcats.stepit.Dagger.Modules.HandlerModule;
 import net.devcats.stepit.Dagger.Modules.RepositoryModule;
 import net.devcats.stepit.Dagger.Scopes.AppScope;
+import net.devcats.stepit.Handlers.UserHandler;
+import net.devcats.stepit.UI.Competition.CompetitionFragmentPresenter;
 import net.devcats.stepit.UI.Home.HomeFragmentPresenter;
 import net.devcats.stepit.UI.Login.LoginActivity;
 import net.devcats.stepit.UI.SelectDevice.SelectDeviceFragment;
@@ -28,5 +30,7 @@ public interface AppComponent {
     void inject(FitBitDevice fitBitDevice);
     void inject(HomeFragmentPresenter homeFragmentPresenter);
     void inject(CreateAccountActivity createAccountActivity);
+    void inject(CompetitionFragmentPresenter competitionFragmentPresenter);
+    void inject(UserHandler userHandler);
 
 }

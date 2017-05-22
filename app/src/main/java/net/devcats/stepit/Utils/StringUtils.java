@@ -30,10 +30,4 @@ public class StringUtils {
     public static boolean isEmpty(String string) {
         return string == null || string.trim().length() == 0 || string.trim().equals("");
     }
-
-    public static String formatDate(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
-        return format.format(date);
-    }
-
 }

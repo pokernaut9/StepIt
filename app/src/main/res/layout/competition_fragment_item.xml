@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="@dimen/spacing_small">
+
+    <TextView
+        android:id="@+id/tvPosition"
+        android:layout_width="50sp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:text="1"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgProfileImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:src="@drawable/ic_blank_user"/>
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        tools:text="Ken Juarez"/>
+
+    <TextView
+        android:id="@+id/tvStepCount"
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical|end"
+        android:textStyle="bold"
+        tools:text="1,234 steps"/>
+
+</LinearLayout>

@@ -1,13 +1,13 @@
 package net.devcats.stepit.Handlers;
 
+import net.devcats.stepit.Api.Responses.UpdateStepsResponse;
 import net.devcats.stepit.Api.StepItApi;
 import net.devcats.stepit.Api.Responses.GetCompetitionsResponse;
 import net.devcats.stepit.Model.Competition;
+import net.devcats.stepit.Utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -15,8 +15,12 @@ import retrofit2.Response;
 
 public class CompetitionsHandler {
 
+    private static final int RETRY_LIMIT = 3;
+
     private StepItApi stepItApi;
     private List<CompetitionsRepositoryCallbacks> callbacks = new ArrayList<>();
+
+    private int retyAttemps;
 
     public CompetitionsHandler(StepItApi stepItApi) {
         this.stepItApi = stepItApi;
@@ -31,9 +35,19 @@ public class CompetitionsHandler {
     }
 
     public void getCompetitions(int userId) {
-        Call<GetCompetitionsResponse> repos = stepItApi.getCompetitions(userId);
+        getCompetitions(userId, 0);
+    }
 
-        repos.enqueue(new Callback<GetCompetitionsResponse>() {
+    public void getCompetitions(int userId, int competition) {
+
+        Call<GetCompetitionsResponse> getCompetitionsResponseCall;
+        if (competition == 0) {
+            getCompetitionsResponseCall = stepItApi.getCompetitions(userId);
+        } else {
+            getCompetitionsResponseCall = stepItApi.getCompetitions(userId, competition);
+        }
+
+        getCompetitionsResponseCall.enqueue(new Callback<GetCompetitionsResponse>() {
             @Override
             public void onResponse(Call<GetCompetitionsResponse> call, Response<GetCompetitionsResponse> response) {
                 notifyCallbacksSuccess(response.body());
@@ -44,6 +58,30 @@ public class CompetitionsHandler {
                 t.printStackTrace();
             }
 
+        });
+    }
+
+    public void updateUsersSteps(final int userId, final int steps) {
+
+        Call<UpdateStepsResponse> updateStepsResponseCall = stepItApi.updateSteps(userId, DateUtils.getCurrentDate(), steps);
+        updateStepsResponseCall.enqueue(new Callback<UpdateStepsResponse>() {
+            @Override
+            public void onResponse(Call<UpdateStepsResponse> call, Response<UpdateStepsResponse> response) {
+                UpdateStepsResponse updateStepsResponse = response.body();
+
+                // Only care if we failed
+                if (!updateStepsResponse.getSuccess()) {
+                    if (retyAttemps <= RETRY_LIMIT) {
+                        updateUsersSteps(userId, steps);
+                        retyAttemps++;
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateStepsResponse> call, Throwable t) {
+                t.printStackTrace();
+            }
         });
     }
 
