@@ -27,11 +27,11 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
     void attach(CompetitionFragmentView competitionFragmentView) {
         view = competitionFragmentView;
         competitionsHandler.registerListener(this);
-        competitionsHandler.getCompetitions(userHandler.getUser().getId(), competitionId);
     }
 
     void present() {
         view.setupUI();
+        refresh();
     }
 
     void refresh() {
