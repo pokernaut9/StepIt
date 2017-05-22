@@ -22,6 +22,7 @@ import net.devcats.stepit.Model.Competition;
 import net.devcats.stepit.Model.User;
 import net.devcats.stepit.R;
 import net.devcats.stepit.UI.Base.BaseFragment;
+import net.devcats.stepit.Utils.StringUtils;
 import net.devcats.stepit.Utils.UiUtils;
 
 import java.util.List;
@@ -64,6 +65,12 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
+
         presenter = new CompetitionFragmentPresenter(getArguments().getString(KEY_COMPETITION));
         presenter.attach(this);
         presenter.present();
@@ -82,12 +89,6 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
 
     @Override
     public void setupUI(Competition competition) {
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
-
         View view = getView();
         if (view != null) {
             swipeContainer = (SwipeRefreshLayout) getView().findViewById(R.id.swipeContainer);
@@ -143,6 +144,12 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
             if (holder instanceof  ViewHolderHeader) {
                 ViewHolderHeader viewHolderHeader = (ViewHolderHeader) holder;
                 viewHolderHeader.tvName.setText(competition.getName());
+
+                if (!StringUtils.isEmpty(competition.getDescription())) {
+                    viewHolderHeader.tvDescription.setText(competition.getDescription());
+                    viewHolderHeader.tvDescription.setVisibility(View.VISIBLE);
+                }
+
                 viewHolderHeader.tvDateRange.setText(competition.getDateRange());
             } else {
                 ViewHolderCompetition viewHolderCompetition = (ViewHolderCompetition) holder;
@@ -193,11 +200,13 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
 
         private class ViewHolderHeader extends RecyclerView.ViewHolder {
             private TextView tvName;
+            private TextView tvDescription;
             private TextView tvDateRange;
 
             ViewHolderHeader(View itemView) {
                 super(itemView);
                 tvName = (TextView) itemView.findViewById(R.id.tvName);
+                tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
                 tvDateRange = (TextView) itemView.findViewById(R.id.tvDateRange);
             }
         }

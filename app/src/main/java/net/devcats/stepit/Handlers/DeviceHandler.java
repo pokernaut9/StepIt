@@ -17,17 +17,8 @@ public class DeviceHandler implements Device.StepsListener {
         void onStepsReceived(int steps);
     }
 
-    private static DeviceHandler instance;
     private DeviceResponseListener deviceResponseListener;
     private Device device;
-
-    public static DeviceHandler getInstance() {
-        if (instance == null) {
-            instance = new DeviceHandler();
-        }
-
-        return instance;
-    }
 
     public Device getDevice() {
         return device;

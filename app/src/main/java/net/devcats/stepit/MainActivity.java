@@ -8,8 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.TextView;
 
+import net.devcats.stepit.Handlers.CompetitionsHandler;
 import net.devcats.stepit.UI.Competition.CompetitionFragment;
 import net.devcats.stepit.UI.Home.HomeFragment;
 import net.devcats.stepit.UI.Login.LoginActivity;
@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements
     UserHandler userHandler;
     @Inject
     PreferencesHandler preferencesHandler;
+    @Inject
+    CompetitionsHandler competitionsHandler;
 
     private Uri data;
     private Toolbar toolbar;
@@ -46,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements
         StepItApplication.getAppComponent().inject(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        TextView tvUsername = (TextView) toolbar.findViewById(R.id.tvUsername);
 
         Intent intent = getIntent();
         data = intent.getData();
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
             if (deviceType < 0) {
                 pushFragment(SelectDeviceFragment.newInstance());
             } else {
-                DeviceHandler.getInstance().connectDevice(this, deviceType);
+                deviceHandler.connectDevice(this, deviceType);
             }
 
         // New user, show create account screen
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
         if (currentFragment instanceof CompetitionFragment) {
+            competitionsHandler.getCompetitions(userHandler.getUser().getId());
             removeFragment(currentFragment);
         } else {
             super.onBackPressed();
@@ -126,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void handleSignOutClicked() {
-        PreferencesHandler.getInstance().clear();
+        preferencesHandler.clear();
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
         finish();
     }

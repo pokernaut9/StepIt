@@ -12,15 +12,6 @@ import net.devcats.stepit.StepItApplication;
 
 public class PreferencesHandler {
 
-    private static PreferencesHandler instance;
-
-    public static PreferencesHandler getInstance() {
-        if (instance == null) {
-            instance = new PreferencesHandler();
-        }
-        return instance;
-    }
-
     public void setString(String key, String value) {
         Context context = StepItApplication.getAppComponent().context();
         SharedPreferences preferences = context.getSharedPreferences(context.getApplicationInfo().name, Context.MODE_PRIVATE);

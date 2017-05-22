@@ -10,15 +10,25 @@
         android:id="@+id/tvName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/spacing_normal"
+        android:paddingTop="@dimen/spacing_normal"
         android:gravity="center"
         android:textSize="@dimen/text_size_large"
         tools:text="Competition Name"/>
 
     <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="@dimen/text_size_small"
+        tools:text="Competition description goes here"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/tvDateRange"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/spacing_normal"
         android:gravity="center"
         tools:text="May 1st, 2017 - May 31st, 2017"/>
 

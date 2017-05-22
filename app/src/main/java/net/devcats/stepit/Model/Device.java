@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 
 import net.devcats.stepit.Handlers.PreferencesHandler;
+import net.devcats.stepit.StepItApplication;
 
 /**
  * Created by Ken Juarez on 12/18/16.
@@ -33,13 +34,13 @@ public abstract class Device {
     protected StepsListener stepsListener;
 
     public void connect(FragmentActivity context) {
-        PreferencesHandler.getInstance().setInt(Device.KEY_DEVICE_TYPE, type);
+        StepItApplication.getAppComponent().preferencesHandler().setInt(Device.KEY_DEVICE_TYPE, type);
     }
 
     public abstract void requestSteps();
 
     public void remove() {
-        PreferencesHandler.getInstance().remove(Device.KEY_DEVICE_TYPE);
+        StepItApplication.getAppComponent().preferencesHandler().remove(Device.KEY_DEVICE_TYPE);
     }
 
     public int getType() {

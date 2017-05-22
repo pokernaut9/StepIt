@@ -1,7 +1,5 @@
 package net.devcats.stepit.Handlers.DeviceHandlers;
 
-import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.customtabs.CustomTabsIntent;
@@ -96,10 +94,6 @@ public class FitBitDevice extends Device {
         return response.substring(response.indexOf("token_type=") + "token_type=".length(), response.indexOf("&", response.indexOf("token_type=")));
     }
 
-    public String getToken() {
-        return fitBitToken;
-    }
-
     private class FitBitGetStepsTask extends AsyncTask<Void, Void, Integer> {
 
         @Override
@@ -177,8 +171,8 @@ public class FitBitDevice extends Device {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            PreferencesHandler.getInstance().remove(KEY_FITBIT_TOKEN);
-            PreferencesHandler.getInstance().remove(KEY_FITBIT_TOKEN_TYPE);
+            preferencesHandler.remove(KEY_FITBIT_TOKEN);
+            preferencesHandler.remove(KEY_FITBIT_TOKEN_TYPE);
 
             deviceListener.onDeviceRemoved();
         }

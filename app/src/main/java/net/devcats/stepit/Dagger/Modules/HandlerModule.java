@@ -16,7 +16,7 @@ public class HandlerModule {
     @Provides
     @AppScope
     DeviceHandler deviceHandler() {
-        return DeviceHandler.getInstance();
+        return new DeviceHandler();
     }
 
     @Provides
@@ -28,7 +28,7 @@ public class HandlerModule {
     @Provides
     @AppScope
     PreferencesHandler preferencesHandler() {
-        return PreferencesHandler.getInstance();
+        return new PreferencesHandler();
     }
 
     @Provides
