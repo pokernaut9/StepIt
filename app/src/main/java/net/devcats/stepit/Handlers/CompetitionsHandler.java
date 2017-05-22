@@ -15,12 +15,8 @@ import retrofit2.Response;
 
 public class CompetitionsHandler {
 
-    private static final int RETRY_LIMIT = 3;
-
     private StepItApi stepItApi;
     private List<CompetitionsRepositoryCallbacks> callbacks = new ArrayList<>();
-
-    private int retyAttemps;
 
     public CompetitionsHandler(StepItApi stepItApi) {
         this.stepItApi = stepItApi;
@@ -67,15 +63,7 @@ public class CompetitionsHandler {
         updateStepsResponseCall.enqueue(new Callback<UpdateStepsResponse>() {
             @Override
             public void onResponse(Call<UpdateStepsResponse> call, Response<UpdateStepsResponse> response) {
-                UpdateStepsResponse updateStepsResponse = response.body();
-
-                // Only care if we failed
-                if (!updateStepsResponse.getSuccess()) {
-                    if (retyAttemps <= RETRY_LIMIT) {
-                        updateUsersSteps(userId, steps);
-                        retyAttemps++;
-                    }
-                }
+                // Do nothing
             }
 
             @Override
