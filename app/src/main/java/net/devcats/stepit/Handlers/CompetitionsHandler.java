@@ -79,7 +79,14 @@ public class CompetitionsHandler {
         }
     }
 
+    private void notifyCallbacksOnError() {
+        for (CompetitionsRepositoryCallbacks callback : callbacks) {
+            callback.onError();
+        }
+    }
+
     public interface CompetitionsRepositoryCallbacks {
         void onCompetitionsReceived(List<Competition> competitions);
+        void onError();
     }
 }

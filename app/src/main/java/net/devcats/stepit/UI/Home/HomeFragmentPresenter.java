@@ -90,6 +90,11 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
         view.onCompetitionsReceived(competitions);
     }
 
+    @Override
+    public void onError() {
+        view.showError();
+    }
+
     interface HomeFragmentView {
         void setName(String name);
         void onStepsReceived(int steps);

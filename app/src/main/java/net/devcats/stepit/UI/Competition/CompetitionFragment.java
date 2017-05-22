@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -112,6 +113,11 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
         }
 
         swipeContainer.setRefreshing(false);
+    }
+
+    @Override
+    public void showError() {
+        Toast.makeText(getContext(), getString(R.string.unknown_error), Toast.LENGTH_LONG).show();
     }
 
     private class CompetitionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

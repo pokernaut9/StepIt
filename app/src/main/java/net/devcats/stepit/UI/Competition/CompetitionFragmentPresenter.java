@@ -50,9 +50,15 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
         view.updateCompetition(competitions.get(0));
     }
 
+    @Override
+    public void onError() {
+        view.showError();
+    }
+
     interface CompetitionFragmentView {
         void setupUI();
         void updateCompetition(Competition competition);
+        void showError();
     }
 
 }
