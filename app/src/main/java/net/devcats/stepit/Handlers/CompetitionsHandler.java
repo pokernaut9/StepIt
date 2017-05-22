@@ -51,6 +51,7 @@ public class CompetitionsHandler {
 
             @Override
             public void onFailure(Call<GetCompetitionsResponse> call, Throwable t) {
+                notifyCallbacksOnError();
                 t.printStackTrace();
             }
 
@@ -68,6 +69,7 @@ public class CompetitionsHandler {
 
             @Override
             public void onFailure(Call<UpdateStepsResponse> call, Throwable t) {
+                notifyCallbacksOnError();
                 t.printStackTrace();
             }
         });
