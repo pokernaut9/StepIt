@@ -63,7 +63,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:customtabs:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.google.android.gms:play-services-fitness:10.2.4'
+    compile 'com.google.android.gms:play-services-fitness:10.2.6'
     compile 'com.android.support:design:25.3.1'
     // OkHttp 3
     compile 'com.squareup.okhttp3:okhttp:3.6.0'

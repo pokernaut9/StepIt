@@ -58,6 +58,11 @@ public class LoginActivity extends AppCompatActivity {
         StepItApplication.getAppComponent().inject(this);
         unbinder = ButterKnife.bind(this);
 
+        if (BuildConfig.DEBUG) {
+            txtEmailAddress.setText("ken@devcats.net");
+            txtPassword.setText("password");
+        }
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

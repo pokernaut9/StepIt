@@ -4,7 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -23,7 +23,9 @@ import net.devcats.stepit.Utils.UiUtils;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity implements
+import static net.devcats.stepit.Handlers.DeviceHandlers.GoogleFitDevice.REQUEST_CODE_RESOLVE_ERR;
+
+public class MainActivity extends FragmentActivity implements
         BaseFragment.PushFragmentInterface,
         Device.DeviceListener {
 
@@ -95,6 +97,15 @@ public class MainActivity extends AppCompatActivity implements
             removeFragment(currentFragment);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_RESOLVE_ERR && resultCode == RESULT_OK) {
+            deviceHandler.getDevice().connect();
         }
     }
 

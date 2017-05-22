@@ -1,9 +1,9 @@
 package net.devcats.stepit.Handlers.DeviceHandlers;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 
 import net.devcats.stepit.BuildConfig;
@@ -39,12 +39,13 @@ public class FitBitDevice extends Device {
     private String fitBitToken;
     private String fitBitTokenType;
 
-    private FragmentActivity fragmentActivity;
+    private Context context;
 
     @Inject
     PreferencesHandler preferencesHandler;
 
-    public FitBitDevice() {
+    public FitBitDevice(Context context) {
+        this.context = context;
         StepItApplication.getAppComponent().inject(this);
         setType(Device.TYPE_FIT_BIT);
 
@@ -53,10 +54,8 @@ public class FitBitDevice extends Device {
     }
 
     @Override
-    public void connect(FragmentActivity context) {
-        super.connect(context);
-
-        this.fragmentActivity = context;
+    public void connect() {
+        super.connect();
 
         if (fitBitToken == null || fitBitToken.isEmpty()) {
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
@@ -140,7 +139,7 @@ public class FitBitDevice extends Device {
                     fitBitTokenType = "";
                     preferencesHandler.setString(KEY_FITBIT_TOKEN, "");
                     preferencesHandler.setString(KEY_FITBIT_TOKEN_TYPE, "");
-                    connect(fragmentActivity);
+                    connect();
                     break;
 
                 default:

@@ -32,20 +32,20 @@ public class DeviceHandler implements Device.StepsListener {
         return device.getType();
     }
 
-    public void connectDevice(FragmentActivity context, int deviceType) {
+    public void connectDevice(FragmentActivity activity, int deviceType) {
         switch (deviceType) {
             case Device.TYPE_GOOGLE_FIT:
-                device = new GoogleFitDevice();
-                device.registerListener((Device.DeviceListener) context);
+                device = new GoogleFitDevice(activity);
+                device.registerListener((Device.DeviceListener) activity);
                 device.registerStepsListener(this);
-                device.connect(context);
+                device.connect();
                 break;
 
             case Device.TYPE_FIT_BIT:
-                device = new FitBitDevice();
-                device.registerListener((Device.DeviceListener) context);
+                device = new FitBitDevice(activity);
+                device.registerListener((Device.DeviceListener) activity);
                 device.registerStepsListener(this);
-                device.connect(context);
+                device.connect();
                 break;
 
             case Device.TYPE_PHONE:

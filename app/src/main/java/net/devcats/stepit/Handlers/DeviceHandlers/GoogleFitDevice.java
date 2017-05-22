@@ -1,14 +1,15 @@
 package net.devcats.stepit.Handlers.DeviceHandlers;
 
-import android.content.Context;
 import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -18,8 +19,6 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 
 import net.devcats.stepit.Model.Device;
-import net.devcats.stepit.StepItApplication;
-import net.devcats.stepit.Utils.LogUtils;
 
 import static com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA;
 import static com.google.android.gms.fitness.data.Field.FIELD_STEPS;
@@ -32,37 +31,36 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class GoogleFitDevice extends Device implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final int REQUEST_CODE_RESOLVE_ERR = 12341234;
+    public static final int REQUEST_CODE_RESOLVE_ERR = 1001;
     private GoogleApiClient mClient = null;
 
-    public GoogleFitDevice() {
+    private FragmentActivity fragmentActivity;
+    private boolean intentInProgress;
+
+    public GoogleFitDevice(FragmentActivity fragmentActivity) {
+        this.fragmentActivity = fragmentActivity;
         setType(Device.TYPE_GOOGLE_FIT);
     }
 
     @Override
-    public void connect(final FragmentActivity fragmentActivity) {
-        super.connect(fragmentActivity);
-        mClient = new GoogleApiClient.Builder(fragmentActivity)
-                .addApi(Fitness.HISTORY_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .enableAutoManage(fragmentActivity, 0, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        try {
-                            LogUtils.e("Google Play services connection failed. Cause: " + connectionResult.toString());
-                            if (connectionResult.hasResolution()) {
-                                connectionResult.startResolutionForResult(fragmentActivity, REQUEST_CODE_RESOLVE_ERR);
-                            }
-                        } catch (IntentSender.SendIntentException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                })
-                .build();
+    public void connect() {
+        super.connect();
 
-        mClient.connect();
+        if (mClient == null) {
+            mClient = new GoogleApiClient.Builder(fragmentActivity)
+                    .enableAutoManage(fragmentActivity, this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(Fitness.HISTORY_API)
+                    .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
+                    .build();
+        }
+
+        if (!mClient.isConnecting()) {
+            intentInProgress = false;
+
+            mClient.connect();
+        }
     }
 
     @Override
@@ -70,10 +68,8 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
         super.remove();
 
         try {
-            FragmentActivity activity = (FragmentActivity) StepItApplication.getAppComponent().context();
-
             mClient.clearDefaultAccountAndReconnect();
-            mClient.stopAutoManage(activity);
+            mClient.stopAutoManage(fragmentActivity);
             mClient.disconnect();
             mClient = null;
         } catch (Exception e) {
@@ -90,22 +86,31 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        LogUtils.d("Connected!!!");
+        Log.d("XXXXX", "Connected!!!");
         deviceListener.onDeviceConnected(Device.TYPE_GOOGLE_FIT);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
         if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-            LogUtils.d("Connection lost. Cause: Network Lost.");
+            Log.d("XXXXX", "Connection lost. Cause: Network Lost.");
         } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-            LogUtils.d("Connection lost. Reason: Service Disconnected");
+            Log.d("XXXXX", "Connection lost. Reason: Service Disconnected");
         }
+        mClient.connect();
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        LogUtils.e("ERROR: GoogleFitDevice.java: " + connectionResult.getErrorMessage());
+        if (!intentInProgress && connectionResult.hasResolution()) {
+            try {
+                intentInProgress = true;
+                connectionResult.startResolutionForResult(fragmentActivity, REQUEST_CODE_RESOLVE_ERR);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+                mClient.connect();
+            }
+        }
     }
 
     private class AndroidWearableGetStepsTask extends AsyncTask<Void, Void, Integer> {

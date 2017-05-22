@@ -33,7 +33,7 @@ public abstract class Device {
     protected DeviceListener deviceListener;
     protected StepsListener stepsListener;
 
-    public void connect(FragmentActivity context) {
+    public void connect() {
         StepItApplication.getAppComponent().preferencesHandler().setInt(Device.KEY_DEVICE_TYPE, type);
     }
 

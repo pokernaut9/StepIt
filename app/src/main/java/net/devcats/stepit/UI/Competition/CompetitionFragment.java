@@ -1,12 +1,13 @@
 package net.devcats.stepit.UI.Competition;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -65,7 +66,7 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
@@ -79,7 +80,7 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setDisplayShowHomeEnabled(false);
