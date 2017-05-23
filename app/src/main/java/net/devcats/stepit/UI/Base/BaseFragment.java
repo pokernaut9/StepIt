@@ -4,11 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import net.devcats.stepit.Dagger.Components.AppComponent;
+import net.devcats.stepit.MainActivity;
 import net.devcats.stepit.StepItApplication;
 import net.devcats.stepit.Utils.LogUtils;
 
@@ -24,10 +23,15 @@ public abstract class BaseFragment extends Fragment {
 
     private Unbinder unbinder;
     private PushFragmentInterface pushFragmentListener;
+    private FABControls fabControls;
 
     public interface PushFragmentInterface {
         void pushFragment(Fragment fragment);
         void removeFragment(Fragment fragment);
+    }
+
+    public interface FABControls {
+        void setFABVisible(boolean visible);
     }
 
     @Override
@@ -52,14 +56,17 @@ public abstract class BaseFragment extends Fragment {
         super.onAttach(context);
         try {
             pushFragmentListener = (PushFragmentInterface) context;
+            fabControls = (FABControls) context;
         } catch (ClassCastException e) {
             LogUtils.e("Error: Class does not have PushFragmentInterface implemented.");
         }
     }
 
-    public AppComponent getComponent() {
-        return ((StepItApplication) getActivity().getApplication()).getAppComponent();
+    public void setFABVisible(boolean visisble) {
+        fabControls.setFABVisible(visisble);
     }
+
+    public abstract void onFabTouched();
 
     public void pushFragment(Fragment fragment) {
         pushFragmentListener.pushFragment(fragment);

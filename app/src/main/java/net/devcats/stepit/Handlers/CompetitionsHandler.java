@@ -31,17 +31,8 @@ public class CompetitionsHandler {
     }
 
     public void getCompetitions(int userId) {
-        getCompetitions(userId, 0);
-    }
 
-    public void getCompetitions(int userId, int competition) {
-
-        Call<GetCompetitionsResponse> getCompetitionsResponseCall;
-        if (competition == 0) {
-            getCompetitionsResponseCall = stepItApi.getCompetitions(userId);
-        } else {
-            getCompetitionsResponseCall = stepItApi.getCompetitions(userId, competition);
-        }
+        Call<GetCompetitionsResponse> getCompetitionsResponseCall = stepItApi.getCompetitions(userId);
 
         getCompetitionsResponseCall.enqueue(new Callback<GetCompetitionsResponse>() {
             @Override

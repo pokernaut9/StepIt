@@ -9,6 +9,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvCompetition"
         android:scrollbars="vertical"
+        android:background="@color/recycler_view_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

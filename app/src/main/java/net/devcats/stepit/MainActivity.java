@@ -1,12 +1,13 @@
 package net.devcats.stepit;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import net.devcats.stepit.Handlers.CompetitionsHandler;
 import net.devcats.stepit.UI.Competition.CompetitionFragment;
@@ -19,7 +20,6 @@ import net.devcats.stepit.Handlers.DeviceHandlers.FitBitDevice;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Handlers.PreferencesHandler;
-import net.devcats.stepit.Utils.UiUtils;
 
 import javax.inject.Inject;
 
@@ -27,6 +27,7 @@ import static net.devcats.stepit.Handlers.DeviceHandlers.GoogleFitDevice.REQUEST
 
 public class MainActivity extends FragmentActivity implements
         BaseFragment.PushFragmentInterface,
+        BaseFragment.FABControls,
         Device.DeviceListener {
 
     @Inject
@@ -39,11 +40,16 @@ public class MainActivity extends FragmentActivity implements
     CompetitionsHandler competitionsHandler;
 
     private Uri data;
+    private FloatingActionButton floatingActionButtonab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null) {
+            return;
+        }
 
         StepItApplication.getAppComponent().inject(this);
 
@@ -52,9 +58,14 @@ public class MainActivity extends FragmentActivity implements
 
         userHandler.loadUser();
 
-        if (savedInstanceState != null) {
-            return;
-        }
+        floatingActionButtonab = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButtonab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BaseFragment currentFragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                currentFragment.onFabTouched();
+            }
+        });
 
         // Are we receiving a FitBit login?
         if (data != null && data.toString().startsWith("stepit://callback#")) {
@@ -93,7 +104,6 @@ public class MainActivity extends FragmentActivity implements
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
         if (currentFragment instanceof CompetitionFragment) {
-            competitionsHandler.getCompetitions(userHandler.getUser().getId());
             removeFragment(currentFragment);
         } else {
             super.onBackPressed();
@@ -109,31 +119,31 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
-    private void handleDeviceClicked() {
-        if (deviceHandler.getDevice() == null) {
-            pushFragment(SelectDeviceFragment.newInstance());
-        } else {
-
-            UiUtils.showYesNoDialog(
-                    this,
-                    R.string.warning, R.string.device_already_connected,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            deviceHandler.removeConnectedDevice();
-                            pushFragment(SelectDeviceFragment.newInstance());
-                        }
-                    },
-                    null
-            );
-        }
-    }
-
-    private void handleSignOutClicked() {
-        preferencesHandler.clear();
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        finish();
-    }
+//    private void handleDeviceClicked() {
+//        if (deviceHandler.getDevice() == null) {
+//            pushFragment(SelectDeviceFragment.newInstance());
+//        } else {
+//
+//            UiUtils.showYesNoDialog(
+//                    this,
+//                    R.string.warning, R.string.device_already_connected,
+//                    new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            deviceHandler.removeConnectedDevice();
+//                            pushFragment(SelectDeviceFragment.newInstance());
+//                        }
+//                    },
+//                    null
+//            );
+//        }
+//    }
+//
+//    private void handleSignOutClicked() {
+//        preferencesHandler.clear();
+//        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+//        finish();
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -190,4 +200,8 @@ public class MainActivity extends FragmentActivity implements
         startActivity(intent);
     }
 
+    @Override
+    public void setFABVisible(boolean visible) {
+        floatingActionButtonab.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
 }

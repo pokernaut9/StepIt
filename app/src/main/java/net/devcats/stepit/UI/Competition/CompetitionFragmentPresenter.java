@@ -35,7 +35,7 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
     }
 
     void refresh() {
-        competitionsHandler.getCompetitions(userHandler.getUser().getId(), competitionId);
+        competitionsHandler.getCompetitions(userHandler.getUser().getId());
     }
 
     void detach() {
@@ -45,7 +45,12 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
 
     @Override
     public void onCompetitionsReceived(List<Competition> competitions) {
-        view.updateCompetition(competitions.get(0));
+        for (Competition competition : competitions) {
+            if (competition.getId() == competitionId) {
+                view.updateCompetition(competition);
+                return;
+            }
+        }
     }
 
     @Override
@@ -53,8 +58,13 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
         view.showError();
     }
 
+    public void addUserToCompetition() {
+
+    }
+
     interface CompetitionFragmentView {
         void setupUI();
+        void setFABVisible(boolean visible);
         void updateCompetition(Competition competition);
         void showError();
     }

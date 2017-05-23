@@ -87,9 +87,17 @@ public class CompetitionFragment extends BaseFragment implements CompetitionFrag
     }
 
     @Override
+    public void onFabTouched() {
+        Toast.makeText(getContext(), "COMPETITION FRAGMENT", Toast.LENGTH_SHORT).show();
+        presenter.addUserToCompetition();
+    }
+
+    @Override
     public void setupUI() {
         View view = getView();
         if (view != null) {
+            setFABVisible(true);
+
             swipeContainer = (SwipeRefreshLayout) getView().findViewById(R.id.swipeContainer);
             swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override

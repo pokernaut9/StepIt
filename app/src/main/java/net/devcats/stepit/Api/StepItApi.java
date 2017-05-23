@@ -31,10 +31,6 @@ public interface StepItApi {
                                         @Field("accountType") int accountType);
 
     @GET("api/?api=getCompetitions")
-    Call<GetCompetitionsResponse> getCompetitions(@Query("userId") int userId,
-                                                  @Query("competitionId") int competitionId);
-
-    @GET("api/?api=getCompetitions")
     Call<GetCompetitionsResponse> getCompetitions(@Query("userId") int userId);
 
     @FormUrlEncoded

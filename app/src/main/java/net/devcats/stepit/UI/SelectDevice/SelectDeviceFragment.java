@@ -62,6 +62,7 @@ public class SelectDeviceFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setFABVisible(false);
 
         tvTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +91,11 @@ public class SelectDeviceFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onFabTouched() {
+        // nothing
     }
 
     private class GridViewAdapter extends BaseAdapter {

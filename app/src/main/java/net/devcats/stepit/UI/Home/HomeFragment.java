@@ -80,6 +80,12 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
     }
 
     @Override
+    public void onFabTouched() {
+        Toast.makeText(getContext(), "HOME FRAGMENT", Toast.LENGTH_SHORT).show();
+        presenter.addNewCompetition();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         presenter.detach();

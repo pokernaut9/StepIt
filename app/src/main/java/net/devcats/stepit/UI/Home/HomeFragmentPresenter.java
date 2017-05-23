@@ -95,6 +95,10 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
         view.showError();
     }
 
+    public void addNewCompetition() {
+
+    }
+
     interface HomeFragmentView {
         void setName(String name);
         void onStepsReceived(int steps);
