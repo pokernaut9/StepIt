@@ -1,6 +1,5 @@
 package net.devcats.stepit.Handlers.DeviceHandlers;
 
-import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -34,7 +33,6 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
     private GoogleApiClient mClient = null;
 
     private FragmentActivity fragmentActivity;
-    private boolean intentInProgress;
 
     public GoogleFitDevice(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
@@ -56,8 +54,6 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
         }
 
         if (!mClient.isConnecting()) {
-            intentInProgress = false;
-
             mClient.connect();
         }
     }
@@ -101,15 +97,7 @@ public class GoogleFitDevice extends Device implements GoogleApiClient.Connectio
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (!intentInProgress && connectionResult.hasResolution()) {
-            try {
-                intentInProgress = true;
-                connectionResult.startResolutionForResult(fragmentActivity, REQUEST_CODE_RESOLVE_ERR);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-                mClient.connect();
-            }
-        }
+
     }
 
     private class AndroidWearableGetStepsTask extends AsyncTask<Void, Void, Integer> {

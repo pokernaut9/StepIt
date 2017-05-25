@@ -11,6 +11,7 @@ import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.UI.Competition.CompetitionFragmentPresenter;
 import net.devcats.stepit.UI.Home.HomeFragmentPresenter;
 import net.devcats.stepit.UI.Login.LoginActivity;
+import net.devcats.stepit.UI.NewCompetition.NewCompetitionFragmentPresenter;
 import net.devcats.stepit.UI.SelectDevice.SelectDeviceFragment;
 import net.devcats.stepit.Handlers.DeviceHandlers.FitBitDevice;
 import net.devcats.stepit.MainActivity;
@@ -33,5 +34,6 @@ public interface AppComponent {
     void inject(CreateAccountActivity createAccountActivity);
     void inject(CompetitionFragmentPresenter competitionFragmentPresenter);
     void inject(UserHandler userHandler);
+    void inject(NewCompetitionFragmentPresenter newCompetitionFragmentPresenter);
 
 }

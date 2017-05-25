@@ -1,5 +1,6 @@
 package net.devcats.stepit.Handlers;
 
+import net.devcats.stepit.Api.Responses.CreateCompetitionResponse;
 import net.devcats.stepit.Api.Responses.UpdateStepsResponse;
 import net.devcats.stepit.Api.StepItApi;
 import net.devcats.stepit.Api.Responses.GetCompetitionsResponse;
@@ -28,6 +29,28 @@ public class CompetitionsHandler {
 
     public void unregisterCallback(CompetitionsRepositoryCallbacks callback) {
         callbacks.remove(callback);
+    }
+
+    public void createCompetition(int userId, Competition competition) {
+        Call<CreateCompetitionResponse> createCompetitionResponseCall = stepItApi.createCompetition(userId, competition.getName(), competition.getDescription(), competition.getSize(), DateUtils.formatServerDate(competition.getStartDate()), DateUtils.formatServerDate(competition.getEndDate()));
+        createCompetitionResponseCall.enqueue(new Callback<CreateCompetitionResponse>() {
+            @Override
+            public void onResponse(Call<CreateCompetitionResponse> call, Response<CreateCompetitionResponse> response) {
+                notifyCallbacksOnCreateSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<CreateCompetitionResponse> call, Throwable t) {
+                notifyCallbacksOnError();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void notifyCallbacksOnCreateSuccess(CreateCompetitionResponse response) {
+        for (CompetitionsRepositoryCallbacks callback : callbacks) {
+            callback.onCompetitionCreated(response.getCompetition());
+        }
     }
 
     public void getCompetitions(int userId) {
@@ -79,6 +102,7 @@ public class CompetitionsHandler {
     }
 
     public interface CompetitionsRepositoryCallbacks {
+        void onCompetitionCreated(Competition competition);
         void onCompetitionsReceived(List<Competition> competitions);
         void onError();
     }

@@ -6,20 +6,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import net.devcats.stepit.Dagger.Components.AppComponent;
+import net.devcats.stepit.Interfaces.RefreshCallbacks;
 import net.devcats.stepit.MainActivity;
-import net.devcats.stepit.StepItApplication;
 import net.devcats.stepit.Utils.LogUtils;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-/**
- * Created by Ken Juarez on 12/17/16.
- * This is the base class used for all fragments
- */
-
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements RefreshCallbacks {
 
     private Unbinder unbinder;
     private PushFragmentInterface pushFragmentListener;
@@ -37,6 +31,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MainActivity) getActivity()).registerRefreshCallback(this);
     }
 
     @Override
@@ -48,6 +43,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroyView() {
         unbinder.unbind();
+        ((MainActivity) getActivity()).unregisterRefreshCallback(this);
         super.onDestroyView();
     }
 
@@ -72,7 +68,4 @@ public abstract class BaseFragment extends Fragment {
         pushFragmentListener.pushFragment(fragment);
     }
 
-    public void removeFragment(Fragment fragment) {
-        pushFragmentListener.removeFragment(fragment);
-    }
 }

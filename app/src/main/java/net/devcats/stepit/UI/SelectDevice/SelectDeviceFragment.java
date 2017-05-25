@@ -20,7 +20,6 @@ import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.R;
 import net.devcats.stepit.StepItApplication;
-import net.devcats.stepit.UI.Login.LoginActivity;
 
 import javax.inject.Inject;
 
@@ -91,6 +90,11 @@ public class SelectDeviceFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void refresh() {
+        // nothing
     }
 
     @Override

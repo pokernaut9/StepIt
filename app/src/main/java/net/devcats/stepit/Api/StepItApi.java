@@ -1,5 +1,6 @@
 package net.devcats.stepit.Api;
 
+import net.devcats.stepit.Api.Responses.CreateCompetitionResponse;
 import net.devcats.stepit.Api.Responses.CreateUserResponse;
 import net.devcats.stepit.Api.Responses.GetCompetitionsResponse;
 import net.devcats.stepit.Api.Responses.LoginResponse;
@@ -29,6 +30,15 @@ public interface StepItApi {
                                         @Field("deviceType") String deviceType,
                                         @Field("profilePicture") String profilePicture,
                                         @Field("accountType") int accountType);
+
+    @FormUrlEncoded
+    @POST("api/?api=createCompetition")
+    Call<CreateCompetitionResponse> createCompetition(@Field("createdBy") int creatorId,
+                                                      @Field("name") String name,
+                                                      @Field("description") String description,
+                                                      @Field("size") int size,
+                                                      @Field("startDate") String startDate,
+                                                      @Field("endDate") String endDate);
 
     @GET("api/?api=getCompetitions")
     Call<GetCompetitionsResponse> getCompetitions(@Query("userId") int userId);

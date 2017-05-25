@@ -10,16 +10,21 @@ import android.view.MenuItem;
 import android.view.View;
 
 import net.devcats.stepit.Handlers.CompetitionsHandler;
+import net.devcats.stepit.Interfaces.RefreshCallbacks;
 import net.devcats.stepit.UI.Competition.CompetitionFragment;
 import net.devcats.stepit.UI.Home.HomeFragment;
 import net.devcats.stepit.UI.Login.LoginActivity;
 import net.devcats.stepit.UI.Base.BaseFragment;
+import net.devcats.stepit.UI.NewCompetition.NewCompetitionFragment;
 import net.devcats.stepit.UI.SelectDevice.SelectDeviceFragment;
 import net.devcats.stepit.Handlers.DeviceHandler;
 import net.devcats.stepit.Handlers.DeviceHandlers.FitBitDevice;
 import net.devcats.stepit.Handlers.UserHandler;
 import net.devcats.stepit.Model.Device;
 import net.devcats.stepit.Handlers.PreferencesHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -40,7 +45,8 @@ public class MainActivity extends FragmentActivity implements
     CompetitionsHandler competitionsHandler;
 
     private Uri data;
-    private FloatingActionButton floatingActionButtonab;
+    private FloatingActionButton floatingActionButton;
+    private List<RefreshCallbacks> refreshCallbacks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +64,8 @@ public class MainActivity extends FragmentActivity implements
 
         userHandler.loadUser();
 
-        floatingActionButtonab = (FloatingActionButton) findViewById(R.id.fab);
-        floatingActionButtonab.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 BaseFragment currentFragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
@@ -101,13 +107,15 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onBackPressed() {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        BaseFragment currentFragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
-        if (currentFragment instanceof CompetitionFragment) {
+        if (currentFragment instanceof CompetitionFragment || currentFragment instanceof NewCompetitionFragment) {
             removeFragment(currentFragment);
         } else {
             super.onBackPressed();
         }
+
+        refreshFragments();
     }
 
     @Override
@@ -202,6 +210,20 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void setFABVisible(boolean visible) {
-        floatingActionButtonab.setVisibility(visible ? View.VISIBLE : View.GONE);
+        floatingActionButton.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    private void refreshFragments() {
+        for (RefreshCallbacks callback : refreshCallbacks) {
+            callback.refresh();
+        }
+    }
+
+    public void registerRefreshCallback(BaseFragment fragment) {
+        refreshCallbacks.add(fragment);
+    }
+
+    public void unregisterRefreshCallback(BaseFragment fragment) {
+        refreshCallbacks.remove(fragment);
     }
 }

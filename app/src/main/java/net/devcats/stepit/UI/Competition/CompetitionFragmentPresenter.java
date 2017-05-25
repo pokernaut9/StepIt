@@ -31,6 +31,7 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
 
     void present() {
         view.setupUI();
+        view.setAddNewCompetitionButtonVisibility(true);
         refresh();
     }
 
@@ -41,6 +42,11 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
     void detach() {
         view = null;
         competitionsHandler.unregisterCallback(this);
+    }
+
+    @Override
+    public void onCompetitionCreated(Competition competition) {
+        // ignore
     }
 
     @Override
@@ -58,15 +64,15 @@ public class CompetitionFragmentPresenter implements CompetitionsHandler.Competi
         view.showError();
     }
 
-    public void addUserToCompetition() {
-
+    void addUserToCompetition() {
+        // TODO
     }
 
     interface CompetitionFragmentView {
         void setupUI();
-        void setFABVisible(boolean visible);
         void updateCompetition(Competition competition);
         void showError();
+        void setAddNewCompetitionButtonVisibility(boolean visibile);
     }
 
 }

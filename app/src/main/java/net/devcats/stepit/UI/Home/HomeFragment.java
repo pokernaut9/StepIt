@@ -20,6 +20,7 @@ import net.devcats.stepit.UI.Base.BaseFragment;
 import net.devcats.stepit.Model.Competition;
 import net.devcats.stepit.R;
 import net.devcats.stepit.UI.Competition.CompetitionFragment;
+import net.devcats.stepit.UI.NewCompetition.NewCompetitionFragment;
 import net.devcats.stepit.Utils.LogUtils;
 import net.devcats.stepit.Utils.StringUtils;
 import net.devcats.stepit.Utils.UiUtils;
@@ -28,11 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-/**
- * Created by Ken Juarez on 12/17/16.
- * Fragment that is used as a dashboard once user is logged in and has a selected device.
- */
 
 public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.HomeFragmentView {
 
@@ -80,8 +76,12 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
     }
 
     @Override
+    public void refresh() {
+        presenter.refresh();
+    }
+
+    @Override
     public void onFabTouched() {
-        Toast.makeText(getContext(), "HOME FRAGMENT", Toast.LENGTH_SHORT).show();
         presenter.addNewCompetition();
     }
 
@@ -108,7 +108,6 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
     public void onStepsReceived(int steps) {
         adapter.updateSteps(steps);
         swipeContainer.setRefreshing(false);
-        LogUtils.d("STEPS!!!! " + steps);
     }
 
     @Override
@@ -117,8 +116,18 @@ public class HomeFragment extends BaseFragment implements HomeFragmentPresenter.
     }
 
     @Override
+    public void showCreateNewCompetitionScreen() {
+        pushFragment(NewCompetitionFragment.newInstance());
+    }
+
+    @Override
     public void updateProfilePicture(String profilePicturePath) {
         new FetchProfileImageTask().execute(profilePicturePath);
+    }
+
+    @Override
+    public void setAddNewCompetitionButtonVisibility(boolean visible) {
+        setFABVisible(visible);
     }
 
     private class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

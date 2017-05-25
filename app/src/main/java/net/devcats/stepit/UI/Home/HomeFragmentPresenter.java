@@ -35,6 +35,7 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     void present() {
         view.setName(userHandler.getUser().getName());
         view.updateProfilePicture(userHandler.getUser().getProfilePicture());
+        view.setAddNewCompetitionButtonVisibility(true);
 
         deviceHandler.requestSteps();
         competitionsHandler.getCompetitions(userHandler.getUser().getId());
@@ -73,6 +74,7 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     void refresh() {
         deviceHandler.requestSteps();
         competitionsHandler.getCompetitions(userHandler.getUser().getId());
+        view.setAddNewCompetitionButtonVisibility(true);
     }
 
     void removeConnectedDevice() {
@@ -86,6 +88,11 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
     }
 
     @Override
+    public void onCompetitionCreated(Competition competition) {
+        // ignore
+    }
+
+    @Override
     public void onCompetitionsReceived(List<Competition> competitions) {
         view.onCompetitionsReceived(competitions);
     }
@@ -95,8 +102,8 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
         view.showError();
     }
 
-    public void addNewCompetition() {
-
+    void addNewCompetition() {
+        view.showCreateNewCompetitionScreen();
     }
 
     interface HomeFragmentView {
@@ -104,7 +111,9 @@ public class HomeFragmentPresenter implements DeviceHandler.DeviceResponseListen
         void onStepsReceived(int steps);
         void onCompetitionsReceived(List<Competition> competitions);
         void showError();
-
+        void showCreateNewCompetitionScreen();
         void updateProfilePicture(String profilePicturePath);
+
+        void setAddNewCompetitionButtonVisibility(boolean visible);
     }
 }
